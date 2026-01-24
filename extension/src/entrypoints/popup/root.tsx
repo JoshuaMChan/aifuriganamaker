@@ -2,17 +2,14 @@ import { debounce, isNotNil } from "es-toolkit";
 import { useTranslation } from "react-i18next";
 import CursorOutlineIcon from "@/assets/icons/CursorDefault.svg?react";
 import CursorTextIcon from "@/assets/icons/CursorText.svg?react";
-import GithubIcon from "@/assets/icons/Github.svg?react";
 import PowerIcon from "@/assets/icons/Power.svg?react";
 import SettingIcon from "@/assets/icons/Setting.svg?react";
-import ShareIcon from "@/assets/icons/Share.svg?react";
 import { ExtEvent, ExtStorage, SelectMode } from "@/commons/constants";
 import { cn, sendMessage } from "@/commons/utils";
 import { Button } from "./components/Button";
 import { CheckBox } from "./components/CheckBox";
 import { Link } from "./components/Link";
 import { Select } from "./components/Select";
-import { SharedCard } from "./components/SharedCard";
 import { useGeneralSettingsStore } from "./store";
 
 export function Root() {
@@ -43,7 +40,7 @@ export function Root() {
   const handleEventHappenedWithDebounced = debounce(handleEventHappened, 100);
 
   return (
-    <menu className="space-y-2 border-sky-500 border-r-2 pr-1 font-sans">
+    <menu className="space-y-2 pr-1 font-sans">
       <MenuItem icon={<CursorOutlineIcon />}>
         <Button
           className="playwright-add-furigana-btn"
@@ -81,16 +78,6 @@ export function Root() {
       </MenuItem>
       <MenuItem icon={<SettingIcon />}>
         <Link href={browser.runtime.getURL("/options.html")} text={t("linkSettings")} />
-      </MenuItem>
-      <MenuItem icon={<GithubIcon />}>
-        <Link
-          tip={t("tipOpenIssue")}
-          href="https://github.com/aiktb/furiganamaker/issues"
-          text={t("linkFeedback")}
-        />
-      </MenuItem>
-      <MenuItem icon={<ShareIcon />}>
-        <SharedCard />
       </MenuItem>
     </menu>
   );
