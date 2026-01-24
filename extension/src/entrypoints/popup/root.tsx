@@ -30,7 +30,6 @@ export function Root() {
       <MenuItem icon={<PowerIcon className={cn(autoModeEnabled && "text-emerald-400")} />}>
         <CheckBox
           className="playwright-toggle-auto-mode"
-          tip={t("tipRefreshPage")}
           text={t("toggleAutoMode")}
           checked={autoModeEnabled}
           onChange={(enabled) => {
