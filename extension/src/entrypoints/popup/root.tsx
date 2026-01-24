@@ -1,6 +1,5 @@
 import { debounce, isNotNil } from "es-toolkit";
 import { useTranslation } from "react-i18next";
-import ColorPickerIcon from "@/assets/icons/ColorPicker.svg?react";
 import CursorOutlineIcon from "@/assets/icons/CursorDefault.svg?react";
 import CursorTextIcon from "@/assets/icons/CursorText.svg?react";
 import GithubIcon from "@/assets/icons/Github.svg?react";
@@ -11,7 +10,6 @@ import { ExtEvent, ExtStorage, SelectMode } from "@/commons/constants";
 import { cn, sendMessage } from "@/commons/utils";
 import { Button } from "./components/Button";
 import { CheckBox } from "./components/CheckBox";
-import { ColorPicker } from "./components/ColorPicker";
 import { Link } from "./components/Link";
 import { Select } from "./components/Select";
 import { SharedCard } from "./components/SharedCard";
@@ -20,10 +18,8 @@ import { useGeneralSettingsStore } from "./store";
 export function Root() {
   const autoModeEnabled = useGeneralSettingsStore((state) => state[ExtStorage.AutoMode]);
   const selectedSelectMode = useGeneralSettingsStore((state) => state[ExtStorage.SelectMode]);
-  const fontColor = useGeneralSettingsStore((state) => state[ExtStorage.FontColor]);
   const toggleAutoMode = useGeneralSettingsStore((state) => state.toggleAutoMode);
   const setSelectMode = useGeneralSettingsStore((state) => state.setSelectMode);
-  const setFontColor = useGeneralSettingsStore((state) => state.setFontColor);
   const { t } = useTranslation();
 
   const selectModeOptions = [
@@ -34,8 +30,7 @@ export function Root() {
 
   type ACTIONTYPE =
     | { type: typeof ExtEvent.ToggleAutoMode; payload: boolean }
-    | { type: typeof ExtEvent.SwitchSelectMode; payload: SelectMode }
-    | { type: typeof ExtEvent.AdjustFontColor; payload: string };
+    | { type: typeof ExtEvent.SwitchSelectMode; payload: SelectMode };
 
   const handleEventHappened = async (action: ACTIONTYPE) => {
     // Query all tabs
@@ -81,16 +76,6 @@ export function Root() {
               type: ExtEvent.SwitchSelectMode,
               payload: selected as SelectMode,
             });
-          }}
-        />
-      </MenuItem>
-      <MenuItem icon={<ColorPickerIcon />}>
-        <ColorPicker
-          className="playwright-adjust-font-color-picker"
-          color={fontColor}
-          onChange={(color) => {
-            setFontColor(color);
-            handleEventHappenedWithDebounced({ type: ExtEvent.AdjustFontColor, payload: color });
           }}
         />
       </MenuItem>
