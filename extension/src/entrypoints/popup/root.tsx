@@ -4,7 +4,6 @@ import ColorPickerIcon from "@/assets/icons/ColorPicker.svg?react";
 import CursorOutlineIcon from "@/assets/icons/CursorDefault.svg?react";
 import CursorTextIcon from "@/assets/icons/CursorText.svg?react";
 import EyeIcon from "@/assets/icons/Eye.svg?react";
-import FilterIcon from "@/assets/icons/Filter.svg?react";
 import FontSizeIcon from "@/assets/icons/FontSize.svg?react";
 import GithubIcon from "@/assets/icons/Github.svg?react";
 import PowerIcon from "@/assets/icons/Power.svg?react";
@@ -23,13 +22,11 @@ import { useGeneralSettingsStore } from "./store";
 
 export function Root() {
   const autoModeEnabled = useGeneralSettingsStore((state) => state[ExtStorage.AutoMode]);
-  const kanjiFilterEnabled = useGeneralSettingsStore((state) => state[ExtStorage.KanjiFilter]);
   const selectedDisplayMode = useGeneralSettingsStore((state) => state[ExtStorage.DisplayMode]);
   const selectedSelectMode = useGeneralSettingsStore((state) => state[ExtStorage.SelectMode]);
   const fontSize = useGeneralSettingsStore((state) => state[ExtStorage.FontSize]);
   const fontColor = useGeneralSettingsStore((state) => state[ExtStorage.FontColor]);
   const toggleAutoMode = useGeneralSettingsStore((state) => state.toggleAutoMode);
-  const toggleKanjiFilter = useGeneralSettingsStore((state) => state.toggleKanjiFilter);
   const setDisplayMode = useGeneralSettingsStore((state) => state.setDisplayMode);
   const setSelectMode = useGeneralSettingsStore((state) => state.setSelectMode);
   const setFontSize = useGeneralSettingsStore((state) => state.setFontSize);
@@ -51,7 +48,6 @@ export function Root() {
 
   type ACTIONTYPE =
     | { type: typeof ExtEvent.ToggleAutoMode; payload: boolean }
-    | { type: typeof ExtEvent.ToggleKanjiFilter; payload: boolean }
     | { type: typeof ExtEvent.SwitchDisplayMode; payload: DisplayMode }
     | { type: typeof ExtEvent.SwitchSelectMode; payload: SelectMode }
     | { type: typeof ExtEvent.AdjustFontSize; payload: number }
@@ -86,21 +82,6 @@ export function Root() {
           onChange={(enabled) => {
             toggleAutoMode();
             handleEventHappenedWithDebounced({ type: ExtEvent.ToggleAutoMode, payload: enabled });
-          }}
-        />
-      </MenuItem>
-      <MenuItem icon={<FilterIcon className={cn(kanjiFilterEnabled && "text-sky-500")} />}>
-        <CheckBox
-          className="playwright-toggle-kanji-filter"
-          tip={t("tipFilterLevel")}
-          text={t("toggleKanjiFilter")}
-          checked={kanjiFilterEnabled}
-          onChange={(enabled) => {
-            toggleKanjiFilter();
-            handleEventHappenedWithDebounced({
-              type: ExtEvent.ToggleKanjiFilter,
-              payload: enabled,
-            });
           }}
         />
       </MenuItem>
