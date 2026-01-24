@@ -60,7 +60,7 @@ export function Select({ selected, options, tip, onChange, className }: SelectPr
                   <li
                     className={cn(
                       "box-content flex cursor-pointer items-center justify-between ui-active:bg-gray-200 px-[6px] capitalize transition-all hover:bg-gray-200 focus:z-10 focus:bg-gray-200 dark:ui-active:bg-slate-700 dark:focus:bg-slate-700 dark:hover:bg-slate-700",
-                      focus || selected ? "text-sky-500" : "text-current",
+                      focus || selected ? "text-emerald-400" : "text-current",
                     )}
                   >
                     {item.label}

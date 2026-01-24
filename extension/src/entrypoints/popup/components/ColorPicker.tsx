@@ -42,7 +42,7 @@ export function ColorPicker({ color, onChange, className }: ColorPickerProps) {
           >
             <PopoverPanel focus className="absolute inset-0 z-50 bg-white dark:bg-slate-900">
               <ColorPickerPanel color={color} onChange={onChange}>
-                <PopoverButton className="playwright-color-picker-close-btn mt-1 flex cursor-pointer items-center justify-center gap-1 rounded-md bg-slate-950/5 px-2 py-1 text-slate-800 transition hover:text-sky-500 dark:bg-white/5 dark:text-white">
+                <PopoverButton className="playwright-color-picker-close-btn mt-1 flex cursor-pointer items-center justify-center gap-1 rounded-md bg-slate-950/5 px-2 py-1 text-slate-800 transition hover:text-emerald-400 dark:bg-white/5 dark:text-white">
                   <i className="i-tabler-x size-4" />
                   {t("btnClosePanel")}
                 </PopoverButton>
@@ -131,7 +131,7 @@ function ColorPickerPanel({ color, children, onChange }: ColorPickerPanelProps) 
             <span>HEX </span>
             <input
               id="color-input"
-              className="ml-1 h-6 w-21 rounded-sm border-none px-1.5 font-bold font-sans text-sm uppercase shadow-xs ring-1 ring-gray-300 ring-inset focus:border-none focus:ring-2 focus:ring-sky-500 dark:bg-slate-950 dark:ring-slate-700 dark:focus-visible:ring-sky-500"
+              className="ml-1 h-6 w-21 rounded-sm border-none px-1.5 font-bold font-sans text-sm uppercase shadow-xs ring-1 ring-gray-300 ring-inset focus:border-none focus:ring-2 focus:ring-emerald-400 dark:bg-slate-950 dark:ring-slate-700 dark:focus-visible:ring-emerald-400"
               value={input}
               onChange={(event) => {
                 setInput(event.target.value);
@@ -149,7 +149,7 @@ function ColorPickerPanel({ color, children, onChange }: ColorPickerPanelProps) 
             />
           </label>
           <button
-            className="flex w-14 cursor-pointer items-center justify-center rounded-md bg-slate-950/5 px-1.5 py-1 text-slate-800 transition hover:text-sky-500 dark:bg-white/5 dark:text-white"
+            className="flex w-14 cursor-pointer items-center justify-center rounded-md bg-slate-950/5 px-1.5 py-1 text-slate-800 transition hover:text-emerald-400 dark:bg-white/5 dark:text-white"
             onClick={() => {
               setHue(0);
               setSaturationAndValue({ s: 1, v: 1 });

@@ -13,7 +13,7 @@ export function Link({ href, text, tip }: LinkProps) {
         target="_blank"
         href={href}
         rel="noopener noreferrer"
-        className="flex flex-1 items-center gap-x-1 rounded-sm px-2 capitalize transition duration-300 hover:bg-gray-200 hover:text-sky-500 focus-visible:bg-gray-200 focus-visible:text-sky-500 dark:focus-visible:bg-slate-700 dark:hover:bg-slate-700"
+        className="flex flex-1 items-center gap-x-1 rounded-sm px-2 capitalize transition duration-300 hover:bg-gray-200 hover:text-emerald-400 focus-visible:bg-gray-200 focus-visible:text-emerald-400 dark:focus-visible:bg-slate-700 dark:hover:bg-slate-700"
       >
         {text}
       </a>

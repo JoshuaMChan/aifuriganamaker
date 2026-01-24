@@ -49,7 +49,7 @@ export function SharedCard() {
         <ToolTip key={media} tip={t("tipShareOn", { media })}>
           <ShareButton
             resetButtonStyle={false}
-            className="flex size-5 cursor-pointer items-center justify-center transition hover:text-sky-500 focus-visible:text-sky-500"
+            className="flex size-5 cursor-pointer items-center justify-center transition hover:text-emerald-400 focus-visible:text-emerald-400"
             url={shareUrl}
           >
             {Icon}

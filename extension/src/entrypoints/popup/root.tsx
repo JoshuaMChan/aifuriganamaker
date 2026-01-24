@@ -27,7 +27,7 @@ export function Root() {
 
   return (
     <menu className="space-y-2 pr-1 font-sans">
-      <MenuItem icon={<PowerIcon className={cn(autoModeEnabled && "text-sky-500")} />}>
+      <MenuItem icon={<PowerIcon className={cn(autoModeEnabled && "text-emerald-400")} />}>
         <CheckBox
           className="playwright-toggle-auto-mode"
           tip={t("tipRefreshPage")}
