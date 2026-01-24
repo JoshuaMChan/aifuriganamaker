@@ -79,8 +79,8 @@ export function Sidebar() {
             className="flex items-center gap-2 text-black transition hover:text-sky-500 dark:text-white"
           >
             <div className="flex items-center justify-center gap-2 px-1.5">
-              <span className="font-bold text-lg underline decoration-sky-500 decoration-wavy">
-                Furigana Maker
+              <span className="font-bold text-lg decoration-sky-500 decoration-wavy">
+                音読み殺し屋
               </span>
               <span className="font-normal text-sm">{`v${browser.runtime.getManifest().version}`}</span>
             </div>
