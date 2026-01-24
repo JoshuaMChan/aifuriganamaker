@@ -7,11 +7,10 @@ import EyeIcon from "@/assets/icons/Eye.svg?react";
 import FilterIcon from "@/assets/icons/Filter.svg?react";
 import FontSizeIcon from "@/assets/icons/FontSize.svg?react";
 import GithubIcon from "@/assets/icons/Github.svg?react";
-import HiraganaIcon from "@/assets/icons/Hiragana.svg?react";
 import PowerIcon from "@/assets/icons/Power.svg?react";
 import SettingIcon from "@/assets/icons/Setting.svg?react";
 import ShareIcon from "@/assets/icons/Share.svg?react";
-import { DisplayMode, ExtEvent, ExtStorage, FuriganaType, SelectMode } from "@/commons/constants";
+import { DisplayMode, ExtEvent, ExtStorage, SelectMode } from "@/commons/constants";
 import { cn, sendMessage } from "@/commons/utils";
 import { Button } from "./components/Button";
 import { CheckBox } from "./components/CheckBox";
@@ -26,14 +25,12 @@ export function Root() {
   const autoModeEnabled = useGeneralSettingsStore((state) => state[ExtStorage.AutoMode]);
   const kanjiFilterEnabled = useGeneralSettingsStore((state) => state[ExtStorage.KanjiFilter]);
   const selectedDisplayMode = useGeneralSettingsStore((state) => state[ExtStorage.DisplayMode]);
-  const selectedFuriganaType = useGeneralSettingsStore((state) => state[ExtStorage.FuriganaType]);
   const selectedSelectMode = useGeneralSettingsStore((state) => state[ExtStorage.SelectMode]);
   const fontSize = useGeneralSettingsStore((state) => state[ExtStorage.FontSize]);
   const fontColor = useGeneralSettingsStore((state) => state[ExtStorage.FontColor]);
   const toggleAutoMode = useGeneralSettingsStore((state) => state.toggleAutoMode);
   const toggleKanjiFilter = useGeneralSettingsStore((state) => state.toggleKanjiFilter);
   const setDisplayMode = useGeneralSettingsStore((state) => state.setDisplayMode);
-  const setFuriganaType = useGeneralSettingsStore((state) => state.setFuriganaType);
   const setSelectMode = useGeneralSettingsStore((state) => state.setSelectMode);
   const setFontSize = useGeneralSettingsStore((state) => state.setFontSize);
   const setFontColor = useGeneralSettingsStore((state) => state.setFontColor);
@@ -46,11 +43,6 @@ export function Root() {
     { label: t("optionHoverNoGap"), value: DisplayMode.HoverNoGap },
     { label: t("optionHoverMask"), value: DisplayMode.HoverMask },
   ];
-  const furiganaTypeOptions = [
-    { label: t("optionHiragana"), value: FuriganaType.Hiragana },
-    { label: t("optionKatakana"), value: FuriganaType.Katakana },
-    { label: t("optionRomaji"), value: FuriganaType.Romaji },
-  ];
   const selectModeOptions = [
     { label: t("optionDefault"), value: SelectMode.Default },
     { label: t("optionOriginal"), value: SelectMode.Original },
@@ -61,7 +53,6 @@ export function Root() {
     | { type: typeof ExtEvent.ToggleAutoMode; payload: boolean }
     | { type: typeof ExtEvent.ToggleKanjiFilter; payload: boolean }
     | { type: typeof ExtEvent.SwitchDisplayMode; payload: DisplayMode }
-    | { type: typeof ExtEvent.SwitchFuriganaType; payload: FuriganaType }
     | { type: typeof ExtEvent.SwitchSelectMode; payload: SelectMode }
     | { type: typeof ExtEvent.AdjustFontSize; payload: number }
     | { type: typeof ExtEvent.AdjustFontColor; payload: string };
@@ -123,20 +114,6 @@ export function Root() {
             handleEventHappenedWithDebounced({
               type: ExtEvent.SwitchDisplayMode,
               payload: selected as DisplayMode,
-            });
-          }}
-        />
-      </MenuItem>
-      <MenuItem icon={<HiraganaIcon />}>
-        <Select
-          className="playwright-switch-furigana-type"
-          selected={selectedFuriganaType}
-          options={furiganaTypeOptions}
-          onChange={(selected) => {
-            setFuriganaType(selected as FuriganaType);
-            handleEventHappenedWithDebounced({
-              type: ExtEvent.SwitchFuriganaType,
-              payload: selected as FuriganaType,
             });
           }}
         />
