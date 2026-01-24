@@ -1,12 +1,10 @@
 import { debounce, isNotNil } from "es-toolkit";
 import { useTranslation } from "react-i18next";
-import CursorOutlineIcon from "@/assets/icons/CursorDefault.svg?react";
 import CursorTextIcon from "@/assets/icons/CursorText.svg?react";
 import PowerIcon from "@/assets/icons/Power.svg?react";
 import SettingIcon from "@/assets/icons/Setting.svg?react";
 import { ExtEvent, ExtStorage, SelectMode } from "@/commons/constants";
 import { cn, sendMessage } from "@/commons/utils";
-import { Button } from "./components/Button";
 import { CheckBox } from "./components/CheckBox";
 import { Link } from "./components/Link";
 import { Select } from "./components/Select";
@@ -41,14 +39,6 @@ export function Root() {
 
   return (
     <menu className="space-y-2 pr-1 font-sans">
-      <MenuItem icon={<CursorOutlineIcon />}>
-        <Button
-          className="playwright-add-furigana-btn"
-          tip={t("tipEscShortcut")}
-          text={t("btnAddFurigana")}
-          onClick={addFurigana}
-        />
-      </MenuItem>
       <MenuItem icon={<PowerIcon className={cn(autoModeEnabled && "text-sky-500")} />}>
         <CheckBox
           className="playwright-toggle-auto-mode"
@@ -81,11 +71,6 @@ export function Root() {
       </MenuItem>
     </menu>
   );
-}
-
-async function addFurigana() {
-  const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
-  await sendMessage(tab!.id!, ExtEvent.AddFurigana);
 }
 
 interface MenuItemProps {
