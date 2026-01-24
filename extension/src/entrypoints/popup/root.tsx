@@ -3,43 +3,29 @@ import { useTranslation } from "react-i18next";
 import ColorPickerIcon from "@/assets/icons/ColorPicker.svg?react";
 import CursorOutlineIcon from "@/assets/icons/CursorDefault.svg?react";
 import CursorTextIcon from "@/assets/icons/CursorText.svg?react";
-import EyeIcon from "@/assets/icons/Eye.svg?react";
-import FontSizeIcon from "@/assets/icons/FontSize.svg?react";
 import GithubIcon from "@/assets/icons/Github.svg?react";
 import PowerIcon from "@/assets/icons/Power.svg?react";
 import SettingIcon from "@/assets/icons/Setting.svg?react";
 import ShareIcon from "@/assets/icons/Share.svg?react";
-import { DisplayMode, ExtEvent, ExtStorage, SelectMode } from "@/commons/constants";
+import { ExtEvent, ExtStorage, SelectMode } from "@/commons/constants";
 import { cn, sendMessage } from "@/commons/utils";
 import { Button } from "./components/Button";
 import { CheckBox } from "./components/CheckBox";
 import { ColorPicker } from "./components/ColorPicker";
 import { Link } from "./components/Link";
-import { RangeSlider } from "./components/RangeSlider";
 import { Select } from "./components/Select";
 import { SharedCard } from "./components/SharedCard";
 import { useGeneralSettingsStore } from "./store";
 
 export function Root() {
   const autoModeEnabled = useGeneralSettingsStore((state) => state[ExtStorage.AutoMode]);
-  const selectedDisplayMode = useGeneralSettingsStore((state) => state[ExtStorage.DisplayMode]);
   const selectedSelectMode = useGeneralSettingsStore((state) => state[ExtStorage.SelectMode]);
-  const fontSize = useGeneralSettingsStore((state) => state[ExtStorage.FontSize]);
   const fontColor = useGeneralSettingsStore((state) => state[ExtStorage.FontColor]);
   const toggleAutoMode = useGeneralSettingsStore((state) => state.toggleAutoMode);
-  const setDisplayMode = useGeneralSettingsStore((state) => state.setDisplayMode);
   const setSelectMode = useGeneralSettingsStore((state) => state.setSelectMode);
-  const setFontSize = useGeneralSettingsStore((state) => state.setFontSize);
   const setFontColor = useGeneralSettingsStore((state) => state.setFontColor);
   const { t } = useTranslation();
 
-  const displayModeOptions = [
-    { label: t("optionAlwaysShow"), value: DisplayMode.Always },
-    { label: t("optionNeverShow"), value: DisplayMode.Never },
-    { label: t("optionHoverGap"), value: DisplayMode.Hover },
-    { label: t("optionHoverNoGap"), value: DisplayMode.HoverNoGap },
-    { label: t("optionHoverMask"), value: DisplayMode.HoverMask },
-  ];
   const selectModeOptions = [
     { label: t("optionDefault"), value: SelectMode.Default },
     { label: t("optionOriginal"), value: SelectMode.Original },
@@ -48,9 +34,7 @@ export function Root() {
 
   type ACTIONTYPE =
     | { type: typeof ExtEvent.ToggleAutoMode; payload: boolean }
-    | { type: typeof ExtEvent.SwitchDisplayMode; payload: DisplayMode }
     | { type: typeof ExtEvent.SwitchSelectMode; payload: SelectMode }
-    | { type: typeof ExtEvent.AdjustFontSize; payload: number }
     | { type: typeof ExtEvent.AdjustFontColor; payload: string };
 
   const handleEventHappened = async (action: ACTIONTYPE) => {
@@ -85,20 +69,6 @@ export function Root() {
           }}
         />
       </MenuItem>
-      <MenuItem icon={<EyeIcon />}>
-        <Select
-          className="playwright-switch-display-mode"
-          selected={selectedDisplayMode}
-          options={displayModeOptions}
-          onChange={(selected) => {
-            setDisplayMode(selected as DisplayMode);
-            handleEventHappenedWithDebounced({
-              type: ExtEvent.SwitchDisplayMode,
-              payload: selected as DisplayMode,
-            });
-          }}
-        />
-      </MenuItem>
       <MenuItem icon={<CursorTextIcon />}>
         <Select
           className="playwright-switch-select-mode"
@@ -111,20 +81,6 @@ export function Root() {
               type: ExtEvent.SwitchSelectMode,
               payload: selected as SelectMode,
             });
-          }}
-        />
-      </MenuItem>
-      <MenuItem icon={<FontSizeIcon />}>
-        <RangeSlider
-          className="playwright-adjust-font-size-slider"
-          value={fontSize}
-          min={50}
-          max={100}
-          step={1}
-          label={t("labelAdjustFont")}
-          onChange={(value) => {
-            setFontSize(value);
-            handleEventHappenedWithDebounced({ type: ExtEvent.AdjustFontSize, payload: value });
           }}
         />
       </MenuItem>
