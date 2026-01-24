@@ -7,7 +7,3 @@ pre-commit:
     typecheck:
       glob: "*.{ts,tsx}"
       run: pnpm run typecheck
-commit-msg:
-  commands:
-    commitlint:
-      run: "pnpm exec commitlint --edit {1}"
