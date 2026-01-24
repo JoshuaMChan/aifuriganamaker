@@ -1,31 +1,19 @@
 import { debounce, isNotNil } from "es-toolkit";
 import { useTranslation } from "react-i18next";
-import CursorTextIcon from "@/assets/icons/CursorText.svg?react";
 import PowerIcon from "@/assets/icons/Power.svg?react";
 import SettingIcon from "@/assets/icons/Setting.svg?react";
-import { ExtEvent, ExtStorage, SelectMode } from "@/commons/constants";
+import { ExtEvent, ExtStorage } from "@/commons/constants";
 import { cn, sendMessage } from "@/commons/utils";
 import { CheckBox } from "./components/CheckBox";
 import { Link } from "./components/Link";
-import { Select } from "./components/Select";
 import { useGeneralSettingsStore } from "./store";
 
 export function Root() {
   const autoModeEnabled = useGeneralSettingsStore((state) => state[ExtStorage.AutoMode]);
-  const selectedSelectMode = useGeneralSettingsStore((state) => state[ExtStorage.SelectMode]);
   const toggleAutoMode = useGeneralSettingsStore((state) => state.toggleAutoMode);
-  const setSelectMode = useGeneralSettingsStore((state) => state.setSelectMode);
   const { t } = useTranslation();
 
-  const selectModeOptions = [
-    { label: t("optionDefault"), value: SelectMode.Default },
-    { label: t("optionOriginal"), value: SelectMode.Original },
-    { label: t("optionParentheses"), value: SelectMode.Parentheses },
-  ];
-
-  type ACTIONTYPE =
-    | { type: typeof ExtEvent.ToggleAutoMode; payload: boolean }
-    | { type: typeof ExtEvent.SwitchSelectMode; payload: SelectMode };
+  type ACTIONTYPE = { type: typeof ExtEvent.ToggleAutoMode; payload: boolean };
 
   const handleEventHappened = async (action: ACTIONTYPE) => {
     // Query all tabs
@@ -48,21 +36,6 @@ export function Root() {
           onChange={(enabled) => {
             toggleAutoMode();
             handleEventHappenedWithDebounced({ type: ExtEvent.ToggleAutoMode, payload: enabled });
-          }}
-        />
-      </MenuItem>
-      <MenuItem icon={<CursorTextIcon />}>
-        <Select
-          className="playwright-switch-select-mode"
-          tip={t("tipCopyText")}
-          selected={selectedSelectMode}
-          options={selectModeOptions}
-          onChange={(selected) => {
-            setSelectMode(selected as SelectMode);
-            handleEventHappenedWithDebounced({
-              type: ExtEvent.SwitchSelectMode,
-              payload: selected as SelectMode,
-            });
           }}
         />
       </MenuItem>

@@ -6,7 +6,6 @@ import { moreSettings, moreSettingsFallback } from "@/commons/utils";
 interface MoreSettingsStore extends MoreSettings {
   setLanguage: (language: string) => void;
   toggleDisableWarning: () => void;
-  toggleColoringKanji: () => void;
   setExcludeSites: (sites: string[]) => void;
   setAlwaysRunSites: (sites: string[]) => void;
 }
@@ -21,11 +20,6 @@ export const useMoreSettingsStore = create<MoreSettingsStore>()(
       toggleDisableWarning: () => {
         set({
           [ExtStorage.DisableWarning]: !get()[ExtStorage.DisableWarning],
-        });
-      },
-      toggleColoringKanji: () => {
-        set({
-          [ExtStorage.ColoringKanji]: !get()[ExtStorage.ColoringKanji],
         });
       },
       setExcludeSites: (sites) => {

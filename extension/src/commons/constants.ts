@@ -26,7 +26,6 @@ export const ExtStorage = {
   FontColor: "fontColor",
   Language: "language",
   DisableWarning: "disableWarning",
-  ColoringKanji: "coloringKanji",
   ExcludeSites: "excludeSites",
   SelectorRules: "selectorRules",
   FilterRules: "filterRules",
@@ -87,7 +86,6 @@ export interface MoreSettings {
    */
   [ExtStorage.Language]: string | null;
   [ExtStorage.DisableWarning]: boolean;
-  [ExtStorage.ColoringKanji]: boolean;
   /**
    * Glob is supported.
    */

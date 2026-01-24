@@ -10,7 +10,7 @@ import {
   type StyleEvent,
 } from "@/commons/constants";
 import { Selector } from "@/commons/selectElement";
-import { getGeneralSettings, getMoreSettings, toStorageKey } from "@/commons/utils";
+import { getGeneralSettings, toStorageKey } from "@/commons/utils";
 
 export default defineContentScript({
   matches: ["*://*/*"],
@@ -114,9 +114,8 @@ async function styleHandler(type: StyleEvent) {
         }`;
       break;
     case ExtEvent.AdjustFontColor: {
-      const coloringKanji = await getMoreSettings(ExtStorage.ColoringKanji);
       css = `
-        ${coloringKanji ? rubySelector : rtSelector} {
+        ${rtSelector} {
           color: ${value};
         }`;
       break;

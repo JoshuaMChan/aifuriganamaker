@@ -60,7 +60,8 @@ export const generalSettingsFallback = {
   [ExtStorage.KanjiFilter]: false,
   [ExtStorage.DisplayMode]: DisplayMode.Always,
   [ExtStorage.FuriganaType]: FuriganaType.Hiragana,
-  [ExtStorage.SelectMode]: SelectMode.Default,
+  // Default to the "Parentheses" select mode
+  [ExtStorage.SelectMode]: SelectMode.Parentheses,
   [ExtStorage.FontSize]: 75,
   [ExtStorage.FontColor]: "currentColor",
 } satisfies GeneralSettings;
@@ -84,7 +85,6 @@ export async function getGeneralSettings<K extends keyof GeneralSettings>(key: K
 export const moreSettingsFallback = {
   [ExtStorage.Language]: null,
   [ExtStorage.DisableWarning]: false,
-  [ExtStorage.ColoringKanji]: false,
   [ExtStorage.ExcludeSites]: [],
   [ExtStorage.AlwaysRunSites]: [],
 } satisfies MoreSettings;

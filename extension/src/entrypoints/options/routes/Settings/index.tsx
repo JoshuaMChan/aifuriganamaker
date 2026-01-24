@@ -9,13 +9,11 @@ import { useMoreSettingsStore } from "./store";
 export function Settings() {
   const language = useMoreSettingsStore((state) => state[ExtStorage.Language]);
   const warningDisabled = useMoreSettingsStore((state) => state[ExtStorage.DisableWarning]);
-  const coloringKanjiEnabled = useMoreSettingsStore((state) => state[ExtStorage.ColoringKanji]);
   const excludedSites = useMoreSettingsStore((state) => state[ExtStorage.ExcludeSites]);
   const alwaysRunSites = useMoreSettingsStore((state) => state[ExtStorage.AlwaysRunSites]);
   const setLanguage = useMoreSettingsStore((state) => state.setLanguage);
   const setExcludeSites = useMoreSettingsStore((state) => state.setExcludeSites);
   const setAlwaysRunSites = useMoreSettingsStore((state) => state.setAlwaysRunSites);
-  const toggleColoringKanji = useMoreSettingsStore((state) => state.toggleColoringKanji);
   const toggleDisableWarning = useMoreSettingsStore((state) => state.toggleDisableWarning);
   const { i18n, t } = useTranslation();
 
@@ -44,15 +42,6 @@ export function Settings() {
           <div>{t("settingsLanguageDesc")}</div>
         </div>
         <LanguageSwitcher language={language ?? i18n.language} onChange={handleLanguageChange} />
-      </li>
-      <li className="flex w-full items-center justify-between gap-4">
-        <div>
-          <div className="font-bold text-lg text-slate-800 dark:text-slate-200">
-            {t("settingsColoringKanji")}
-          </div>
-          <div>{t("settingsColoringKanjiDesc")}</div>
-        </div>
-        <SettingSwitch enabled={coloringKanjiEnabled} onChange={toggleColoringKanji} />
       </li>
       <DomainListHandler
         sites={excludedSites}
