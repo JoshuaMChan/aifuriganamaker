@@ -1,7 +1,7 @@
 import { Transition } from "@headlessui/react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Link, type LinkProps, NavLink } from "react-router";
+import { type LinkProps, NavLink } from "react-router";
 import { cn } from "@/commons/utils";
 
 type CustomLink = LinkProps & { label: string; icon: string; fillIcon?: string };
@@ -54,7 +54,7 @@ export function Sidebar() {
   return (
     <>
       <button
-        className="-mx-2 fixed top-3 left-8 z-20 flex cursor-pointer items-center justify-center rounded-sm border-solid bg-slate-950/5 p-2 text-slate-800 hover:text-sky-500 lg:hidden dark:bg-white/5 dark:text-white"
+        className="-mx-2 fixed top-3 left-8 z-20 flex cursor-pointer items-center justify-center rounded-sm border-solid bg-slate-950/5 p-2 text-slate-800 hover:text-neutral-200 lg:hidden dark:bg-white/5 dark:text-white"
         onClick={() => setSidebarIsOpen(!sidebarIsOpen)}
       >
         <span className="sr-only">{t("srToggleSidebar")}</span>
@@ -69,22 +69,17 @@ export function Sidebar() {
       <Transition show={sidebarIsOpen}>
         <nav
           className={cn(
-            "data-[enter]:data-[closed]:-translate-x-full data-[leave]:data-[closed]:-translate-x-full fixed top-0 z-30 min-h-screen w-72 flex-col gap-6 border-gray-200 border-r border-solid bg-white px-6 py-5 font-semibold text-base transition ease-in-out data-[closed]:opacity-0 data-[enter]:duration-100 data-[leave]:duration-300 lg:flex dark:border-slate-800 dark:bg-slate-900",
+            "data-[enter]:data-[closed]:-translate-x-full data-[leave]:data-[closed]:-translate-x-full fixed top-0 z-30 min-h-screen w-72 flex-col gap-6 border-gray-200 border-r border-solid bg-white px-6 py-5 font-semibold text-base transition ease-in-out data-[closed]:opacity-0 data-[enter]:duration-100 data-[leave]:duration-300 lg:flex dark:border-neutral-800 dark:bg-neutral-900",
             sidebarIsOpen && "!flex",
           )}
         >
-          <Link
-            to="https://furiganamaker.app"
-            target="_blank"
-            className="flex items-center gap-2 text-black transition hover:text-sky-500 dark:text-white"
-          >
+          <div className="flex items-center gap-2 text-black transition dark:text-white">
             <div className="flex items-center justify-center gap-2 px-1.5">
-              <span className="font-bold text-lg decoration-sky-500 decoration-wavy">
+              <span className="font-bold text-lg decoration-neutral-400 decoration-wavy">
                 音読み殺し屋
               </span>
-              <span className="font-normal text-sm">{`v${browser.runtime.getManifest().version}`}</span>
             </div>
-          </Link>
+          </div>
           <div className="flex flex-1 flex-col justify-start gap-4">
             <div className="-mx-2 flex flex-col gap-2">
               {navItems.map((item) => (
