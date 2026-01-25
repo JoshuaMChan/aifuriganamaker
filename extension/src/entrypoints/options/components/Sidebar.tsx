@@ -25,13 +25,6 @@ export function Sidebar() {
       fillIcon: "i-tabler-ballpen-filled",
     },
     {
-      to: "/kanji-filter",
-      target: "_self",
-      label: t("navKanjiFilter"),
-      icon: "i-tabler-filter",
-      fillIcon: "i-tabler-filter-filled",
-    },
-    {
       to: "/selector",
       target: "_self",
       label: t("navSelector"),
