@@ -114,7 +114,7 @@ export const ImportSelectorRuleButton = () => {
   return (
     <>
       <button
-        className="flex w-40 cursor-pointer items-center justify-center gap-1 overflow-hidden overflow-ellipsis whitespace-nowrap rounded-md bg-slate-950/5 px-1.5 py-2 text-slate-800 transition hover:text-sky-500 sm:px-3 dark:bg-white/5 dark:text-white"
+        className="flex w-40 cursor-pointer items-center justify-center gap-1 overflow-hidden overflow-ellipsis whitespace-nowrap rounded-md bg-slate-950/5 px-1.5 py-2 text-slate-800 transition hover:text-emerald-400 sm:px-3 dark:bg-white/5 dark:text-white"
         onClick={() => {
           setImportDialogIsOpen(true);
         }}
@@ -144,7 +144,7 @@ export const ImportSelectorRuleButton = () => {
             </div>
             <div className="mt-4 flex gap-2.5">
               <button
-                className="inline-flex cursor-pointer justify-center rounded-md border border-transparent bg-sky-600 px-4 py-2 font-semibold text-sm text-white shadow-xs transition hover:bg-sky-500 focus:outline-hidden focus-visible:outline-2 focus-visible:outline-sky-600 focus-visible:outline-offset-2 focus-visible:ring-2 focus-visible:ring-offset-2"
+                className="inline-flex cursor-pointer justify-center rounded-md border border-transparent bg-emerald-600 px-4 py-2 font-semibold text-sm text-white shadow-xs transition hover:bg-emerald-500 focus:outline-hidden focus-visible:outline-2 focus-visible:outline-emerald-600 focus-visible:outline-offset-2 focus-visible:ring-2 focus-visible:ring-offset-2"
                 onClick={() => {
                   importConfig();
                   setImportDialogIsOpen(false);

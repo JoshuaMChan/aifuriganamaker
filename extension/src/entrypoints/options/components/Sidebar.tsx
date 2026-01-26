@@ -82,8 +82,9 @@ export function Sidebar() {
                   target={item.target}
                   className={({ isActive }) =>
                     cn(
-                      "group flex w-64 items-center justify-between rounded-md p-2 hover:bg-slate-100 hover:text-black dark:hover:bg-gray-800 dark:hover:text-white",
-                      isActive && "bg-slate-100 text-black dark:bg-gray-800 dark:text-white",
+                      "group flex w-64 items-center justify-between rounded-md p-2 hover:bg-emerald-100 hover:text-emerald-900 dark:hover:bg-emerald-900/30 dark:hover:text-emerald-300",
+                      isActive &&
+                        "bg-emerald-100 text-emerald-900 dark:bg-emerald-900/30 dark:text-emerald-300",
                     )
                   }
                 >
@@ -92,10 +93,10 @@ export function Sidebar() {
                       <div className="flex items-center gap-4">
                         <i
                           className={cn(
-                            "size-6 group-hover:text-black group-hover:dark:text-white",
+                            "size-6 group-hover:text-emerald-900 group-hover:dark:text-emerald-300",
                             isActive ? item.fillIcon : item.icon,
                             isActive
-                              ? "text-black dark:text-white"
+                              ? "text-emerald-900 dark:text-emerald-300"
                               : "text-slate-600 dark:text-slate-300",
                           )}
                         />

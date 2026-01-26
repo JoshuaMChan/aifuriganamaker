@@ -103,11 +103,11 @@ export function SelectorRuleEditorDialog(props: SelectorRuleEditorDialogProps) {
             <Disclosure as="div">
               {({ open }) => (
                 <>
-                  <DisclosureButton className="flex w-full cursor-pointer items-center justify-between rounded-lg bg-sky-100 px-4 py-2 text-left font-semibold text-sky-900 text-sm hover:bg-sky-200 focus:outline-hidden focus-visible:ring-3 focus-visible:ring-sky-500/75 dark:bg-sky-900 dark:text-sky-300 dark:hover:bg-sky-700">
+                  <DisclosureButton className="flex w-full cursor-pointer items-center justify-between rounded-lg bg-emerald-100 px-4 py-2 text-left font-semibold text-emerald-900 text-sm hover:bg-emerald-200 focus:outline-hidden focus-visible:ring-3 focus-visible:ring-emerald-500/75 dark:bg-emerald-900 dark:text-emerald-300 dark:hover:bg-emerald-700">
                     <h1>{t("disclosureSelector")}</h1>
                     <i
                       className={cn(
-                        "-rotate-90 i-tabler-chevron-left size-4 text-sky-500",
+                        "-rotate-90 i-tabler-chevron-left size-4 text-emerald-500",
                         open && "rotate-180 transform",
                       )}
                     />
@@ -126,7 +126,7 @@ export function SelectorRuleEditorDialog(props: SelectorRuleEditorDialogProps) {
                               ),
                               mdnCssSelectorLink: (
                                 <a
-                                  className="cursor-pointer border-sky-500 border-b font-semibold text-slate-900 hover:border-b-2 dark:text-slate-200"
+                                  className="cursor-pointer border-emerald-500 border-b font-semibold text-slate-900 hover:border-b-2 dark:text-slate-200"
                                   href="https://developer.mozilla.org/docs/Web/CSS/CSS_selectors"
                                 >
                                   {t("cssSelector")}
@@ -149,7 +149,7 @@ export function SelectorRuleEditorDialog(props: SelectorRuleEditorDialogProps) {
                     <h1>{t("disclosureDomain")}</h1>
                     <i
                       className={cn(
-                        "-rotate-90 i-tabler-chevron-left size-4 text-sky-500",
+                        "-rotate-90 i-tabler-chevron-left size-4 text-emerald-500",
                         open && "rotate-180 transform",
                       )}
                     />
@@ -189,7 +189,7 @@ export function SelectorRuleEditorDialog(props: SelectorRuleEditorDialogProps) {
                         name="domain"
                         required
                         placeholder="*.example.com"
-                        className="block w-full rounded-md border-0 py-1.5 text-slate-900 shadow-xs ring-1 ring-gray-300 ring-inset placeholder:text-slate-400 focus:ring-2 focus:ring-sky-600 focus:ring-inset disabled:cursor-not-allowed sm:text-sm sm:leading-6 dark:bg-slate-900 dark:text-white dark:ring-gray-700 dark:focus:ring-sky-600"
+                        className="block w-full rounded-md border-0 py-1.5 text-slate-900 shadow-xs ring-1 ring-gray-300 ring-inset placeholder:text-slate-400 focus:ring-2 focus:ring-emerald-600 focus:ring-inset disabled:cursor-not-allowed sm:text-sm sm:leading-6 dark:bg-slate-900 dark:text-white dark:ring-gray-700 dark:focus:ring-emerald-600"
                         value={domainInput}
                         onChange={(e) => {
                           const value = e.target.value.trim().replace(/^https?:\/\//, "");
@@ -232,7 +232,7 @@ export function SelectorRuleEditorDialog(props: SelectorRuleEditorDialogProps) {
 
                   <div>
                     <button
-                      className="flex w-full cursor-pointer justify-center rounded-md bg-sky-600 px-3 py-1.5 font-semibold text-sm text-white leading-6 shadow-xs focus-visible:outline-2 focus-visible:outline-sky-600 focus-visible:outline-offset-2 enabled:hover:bg-sky-500 disabled:cursor-not-allowed disabled:opacity-50"
+                      className="flex w-full cursor-pointer justify-center rounded-md bg-emerald-600 px-3 py-1.5 font-semibold text-sm text-white leading-6 shadow-xs focus-visible:outline-2 focus-visible:outline-emerald-600 focus-visible:outline-offset-2 enabled:hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-50"
                       disabled={!!domainInputErrorMessage || !!selectorInputErrorMessage}
                       onClick={handleSubmit}
                     >

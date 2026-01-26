@@ -39,7 +39,7 @@ export const SelectorDashboard = () => {
           setClearRuleDialogIsOpen(true);
         }}
         className={cn(
-          "flex w-40 cursor-pointer items-center justify-center gap-1 rounded-md bg-slate-950/5 px-1.5 py-2 text-slate-800 transition enabled:hover:text-sky-500 sm:px-3 dark:bg-white/5 dark:text-white",
+          "flex w-40 cursor-pointer items-center justify-center gap-1 rounded-md bg-slate-950/5 px-1.5 py-2 text-slate-800 transition enabled:hover:text-emerald-400 sm:px-3 dark:bg-white/5 dark:text-white",
           selectors.length === 0 && "cursor-not-allowed opacity-50",
         )}
         disabled={selectors.length === 0}
@@ -89,7 +89,7 @@ export const SelectorDashboard = () => {
         </Dialog>
       </PopupTransition>
       <button
-        className="flex w-40 cursor-pointer items-center justify-center gap-1 rounded-md bg-slate-950/5 px-1.5 py-2 text-slate-800 transition hover:text-sky-500 sm:px-3 dark:bg-white/5 dark:text-white"
+        className="flex w-40 cursor-pointer items-center justify-center gap-1 rounded-md bg-slate-950/5 px-1.5 py-2 text-slate-800 transition hover:text-emerald-400 sm:px-3 dark:bg-white/5 dark:text-white"
         onClick={() => {
           setResetRuleDialogIsOpen(true);
         }}
@@ -143,7 +143,7 @@ export const SelectorDashboard = () => {
       </PopupTransition>
       <button
         className={cn(
-          "flex w-40 cursor-pointer items-center justify-center gap-1 overflow-hidden overflow-ellipsis whitespace-nowrap rounded-md bg-slate-950/5 px-1.5 py-2 text-slate-800 transition enabled:hover:text-sky-500 sm:px-3 dark:bg-white/5 dark:text-white",
+          "flex w-40 cursor-pointer items-center justify-center gap-1 overflow-hidden overflow-ellipsis whitespace-nowrap rounded-md bg-slate-950/5 px-1.5 py-2 text-slate-800 transition enabled:hover:text-emerald-400 sm:px-3 dark:bg-white/5 dark:text-white",
           selectors.length === 0 && "cursor-not-allowed opacity-50",
         )}
         onClick={exportConfig}

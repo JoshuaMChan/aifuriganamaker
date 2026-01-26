@@ -70,20 +70,20 @@ export function SelectorRuleItem({ rule, index }: SelectorRuleItemProps) {
                 <span
                   className={cn(
                     "absolute inline-flex h-full w-full animate-ping rounded-full opacity-75",
-                    rule.active ? "bg-sky-400" : "bg-gray-400",
+                    rule.active ? "bg-emerald-400" : "bg-gray-400",
                   )}
                 />
                 <span
                   className={cn(
                     "relative inline-flex size-2 rounded-full",
-                    rule.active ? "bg-sky-500" : "bg-gray-500",
+                    rule.active ? "bg-emerald-500" : "bg-gray-500",
                   )}
                 />
               </span>
             </button>
             <div className="mt-1 flex gap-x-1.5">
               <button
-                className="flex cursor-pointer items-center gap-1 rounded-md bg-slate-950/5 px-2 py-1 text-slate-800 transition hover:text-sky-500 dark:bg-white/5 dark:text-white"
+                className="flex cursor-pointer items-center gap-1 rounded-md bg-slate-950/5 px-2 py-1 text-slate-800 transition hover:text-emerald-400 dark:bg-white/5 dark:text-white"
                 onClick={() => {
                   setEditorIsOpen(true);
                 }}
@@ -92,7 +92,7 @@ export function SelectorRuleItem({ rule, index }: SelectorRuleItemProps) {
                 {t("btnEdit")}
               </button>
               <button
-                className="flex cursor-pointer items-center gap-1 rounded-md bg-slate-950/5 px-2 py-1 text-slate-800 transition hover:text-sky-500 dark:bg-white/5 dark:text-white"
+                className="flex cursor-pointer items-center gap-1 rounded-md bg-slate-950/5 px-2 py-1 text-slate-800 transition hover:text-emerald-400 dark:bg-white/5 dark:text-white"
                 onClick={() => {
                   setDeleteDialogIsOpen(true);
                 }}
