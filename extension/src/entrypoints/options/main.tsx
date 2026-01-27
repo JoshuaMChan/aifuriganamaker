@@ -24,9 +24,10 @@ const router = createHashRouter([
     element: <Root />,
     errorElement: <ErrorPage />,
     children: [
-      { path: "/", element: <Settings /> },
+      { path: "/", element: <Playground /> },
       { path: "/playground", element: <Playground /> },
       { path: "/selector", element: <Selector /> },
+      { path: "/settings", element: <Settings /> },
       { path: "/changelog", element: <Changelog /> },
     ],
   },

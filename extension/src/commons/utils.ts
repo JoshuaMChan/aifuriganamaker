@@ -83,7 +83,7 @@ export async function getGeneralSettings<K extends keyof GeneralSettings>(key: K
 }
 
 export const moreSettingsFallback = {
-  [ExtStorage.Language]: null,
+  [ExtStorage.Language]: "ja",
   [ExtStorage.DisableWarning]: false,
   [ExtStorage.ExcludeSites]: [],
   [ExtStorage.AlwaysRunSites]: [],

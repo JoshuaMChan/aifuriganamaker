@@ -6,7 +6,7 @@ import { useMoreSettingsStore } from "./store";
 export function Settings() {
   const language = useMoreSettingsStore((state) => state[ExtStorage.Language]);
   const setLanguage = useMoreSettingsStore((state) => state.setLanguage);
-  const { i18n, t } = useTranslation();
+  const { i18n } = useTranslation();
 
   function handleLanguageChange(newLanguage: string) {
     setLanguage(newLanguage);
@@ -19,9 +19,11 @@ export function Settings() {
       <li className="flex w-full items-center justify-between gap-4">
         <div>
           <div className="font-bold text-lg text-slate-800 dark:text-slate-200">
-            {t("settingsLanguage")}
+            インターフェース言語
           </div>
-          <div>{t("settingsLanguageDesc")}</div>
+          <div>
+            この設定は、ポップアップとオプションページの表示言語にのみ影響します。その他のテキストは、ブラウザの言語を変更した後にのみ有効になります。
+          </div>
         </div>
         <LanguageSwitcher language={language ?? i18n.language} onChange={handleLanguageChange} />
       </li>

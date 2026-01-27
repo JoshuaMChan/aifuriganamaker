@@ -11,13 +11,6 @@ export function Sidebar() {
 
   const navItems = [
     {
-      to: "/",
-      target: "_self",
-      label: t("navSettings"),
-      icon: "i-tabler-settings",
-      fillIcon: "i-tabler-settings-filled",
-    },
-    {
       to: "/playground",
       target: "_self",
       label: t("navPlayground"),
