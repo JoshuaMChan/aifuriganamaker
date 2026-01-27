@@ -44,7 +44,6 @@ export function Root() {
     </menu>
   );
 }
-
 interface MenuItemProps {
   children: React.ReactNode;
   icon: React.ReactNode;

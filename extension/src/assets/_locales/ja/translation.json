@@ -1,7 +1,7 @@
 {
   "btnAddFurigana": "振り仮名を追加",
   "tipEscShortcut": "ESCを押して追加をキャンセル",
-  "toggleAutoMode": "自動モード切替",
+  "toggleAutoMode": "オン・オフ",
   "tipRefreshPage": "後はページを更新",
   "toggleKanjiFilter": "漢字フィルター切替",
   "tipFilterLevel": "初期設定はN5とN4",
@@ -21,7 +21,7 @@
   "btnSelectColor": "色を選択",
   "btnReset": "リセット",
   "btnClosePanel": "ピッカーを閉じる",
-  "linkSettings": "その他の設定",
+  "linkSettings": "設定",
   "linkFeedback": "フィードバック",
   "linkSponsor": "開発者を支援",
   "tipOpenIssue": "GitHubで問題を報告",
