@@ -1,4 +1,4 @@
-import type { KanjiMark } from "@/entrypoints/background/listeners/onGetKanjiMarksMessage";
+import type { KanjiMark } from "@/entrypoints/background/listeners/onGetKanjiMarksMessage.ts";
 
 /**
  * In-memory store for all furigana that have been generated on the current page.

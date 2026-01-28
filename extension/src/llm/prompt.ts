@@ -1,4 +1,4 @@
-import type { FuriganaSnapshot } from "@/commons/furiganaMemory.ts";
+import type { FuriganaSnapshot } from "@/llm/furiganaCache.ts";
 
 export function audit(items: FuriganaSnapshot): string {
   return `

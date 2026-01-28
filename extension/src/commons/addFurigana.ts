@@ -1,8 +1,7 @@
 import { toHiragana, toRomaji } from "wanakana";
-import { addFuriganaSnapshot } from "@/commons/furiganaMemory";
 import { sendMessage } from "@/commons/message";
-
 import type { KanjiMark } from "@/entrypoints/background/listeners/onGetKanjiMarksMessage";
+import { addFuriganaSnapshot } from "@/llm/furiganaCache.ts";
 
 import { ExtStorage, FURIGANA_CLASS, FuriganaType } from "./constants";
 import { getGeneralSettings } from "./utils";
