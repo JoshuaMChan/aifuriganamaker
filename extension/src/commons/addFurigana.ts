@@ -1,4 +1,5 @@
 import { toHiragana, toRomaji } from "wanakana";
+import { addFuriganaSnapshot } from "@/commons/furiganaMemory";
 import { sendMessage } from "@/commons/message";
 
 import type { KanjiMark } from "@/entrypoints/background/listeners/onGetKanjiMarksMessage";
@@ -20,7 +21,12 @@ export async function addFurigana(...elements: Element[]) {
 
   const japaneseTexts = elements.flatMap(collectTexts);
   for (const text of japaneseTexts) {
-    const tokens: KanjiMark[] = await tokenize(text.textContent!);
+    const originalText = text.textContent ?? "";
+    const tokens: KanjiMark[] = await tokenize(originalText);
+
+    // Save a copy in memory for later Gemini auditing / correction.
+    addFuriganaSnapshot(originalText, tokens);
+
     // reverse() prevents the range from being invalidated
     for (const token of tokens.reverse()) {
       const ruby = createRuby(token, furiganaType);
