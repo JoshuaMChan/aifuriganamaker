@@ -32,35 +32,3 @@ export function clearFuriganaSnapshots(): void {
 export function getFuriganaSnapshots(): FuriganaSnapshot[] {
   return [...snapshots];
 }
-
-/**
- * Build a basic prompt string that can be sent to Gemini to audit readings.
- *
- * You can freely modify this function later to change the prompt style.
- */
-export function buildGeminiPromptForCorrection(): string {
-  if (snapshots.length === 0) {
-    return "";
-  }
-
-  const lines: string[] = [];
-  lines.push(
-    "You are a Japanese reading (furigana) auditor. The following are sentences and their current readings.",
-  );
-  lines.push(
-    "For each token, check if the reading is natural in context. If something is wrong or ambiguous, explain briefly in Japanese.",
-  );
-  lines.push("");
-
-  snapshots.forEach((snapshot, index) => {
-    lines.push(`Sentence ${index + 1}:`);
-    lines.push(`原文: ${snapshot.text}`);
-    lines.push("読み:");
-    snapshot.tokens.forEach((token) => {
-      lines.push(`- ${token.original} => ${token.reading}`);
-    });
-    lines.push("");
-  });
-
-  return lines.join("\n");
-}

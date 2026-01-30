@@ -1,6 +1,4 @@
-import type { FuriganaSnapshot } from "@/llm/furiganaCache.ts";
-
-export function audit(items: FuriganaSnapshot): string {
+export function audit(json: string): string {
   return `
     ## Task
     Audit the wrong pairs of 振り仮名. Give the wrong pairs by the exact format as I define in the end of this prompt.
@@ -19,9 +17,9 @@ export function audit(items: FuriganaSnapshot): string {
     }[];
 
     ## Input Data
-    ${items}
+    ${json}
 
     ## Out format
-    an array of indexs of wrong tokens from the token list.
+    Exact an array of indexs of wrong tokens from the token list. Nothing more.
   `;
 }

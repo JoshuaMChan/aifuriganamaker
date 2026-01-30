@@ -1,30 +1,42 @@
 import { toHiragana, toRomaji } from "wanakana";
+import { addFuriganaSnapshot } from "@/agent/furiganaCache.ts";
 import { sendMessage } from "@/commons/message";
 import type { KanjiMark } from "@/entrypoints/background/listeners/onGetKanjiMarksMessage";
-import { addFuriganaSnapshot } from "@/llm/furiganaCache.ts";
 
 import { ExtStorage, FURIGANA_CLASS, FuriganaType } from "./constants";
 import { getGeneralSettings } from "./utils";
+
+export interface FuriganaResult {
+  originalText: string;
+  tokens: KanjiMark[];
+}
+
 /**
  * Append ruby tag to all text nodes of a batch of elements.
  * @remarks
  * The parent element of the text node will be added with the FURIGANA_CLASS.
  * Elements that have already been marked will be skipped.
  * Ruby tag is "\<ruby>original\<rp>(\</rp>\<rt>reading\</rt>\<rp>)\</rp>\</ruby>".
+ * @returns Array of objects containing originalText and tokens for each processed text node
  **/
-export async function addFurigana(...elements: Element[]) {
+export async function addFurigana(...elements: Element[]): Promise<FuriganaResult[]> {
   const furiganaType = await getGeneralSettings(ExtStorage.FuriganaType);
   if (!furiganaType) {
-    return;
+    return [];
   }
 
+  const results: FuriganaResult[] = [];
   const japaneseTexts = elements.flatMap(collectTexts);
+
   for (const text of japaneseTexts) {
     const originalText = text.textContent ?? "";
     const tokens: KanjiMark[] = await tokenize(originalText);
 
     // Save a copy in memory for later Gemini auditing / correction.
     addFuriganaSnapshot(originalText, tokens);
+
+    // Store the result for return
+    results.push({ originalText, tokens });
 
     // reverse() prevents the range from being invalidated
     for (const token of tokens.reverse()) {
@@ -36,6 +48,8 @@ export async function addFurigana(...elements: Element[]) {
       range.insertNode(ruby);
     }
   }
+
+  return results;
 }
 
 const exclusionParentTagSet = new Set(["SCRIPT", "STYLE", "NOSCRIPT", "RUBY", "RT", "TITLE"]);

@@ -3,8 +3,9 @@ import { GoogleGenAI } from "@google/genai";
 export async function gemini(prompt: string): Promise<string> {
   const apiKey = import.meta.env.VITE_GEMINI_API_KEY as string;
   const ai = new GoogleGenAI({ apiKey });
+
   const response = await ai.models.generateContent({
-    model: "gemini-2.5-flash",
+    model: "gemini-3-flash-preview",
     contents: prompt,
   });
 
