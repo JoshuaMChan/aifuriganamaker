@@ -182,14 +182,21 @@ const PageTooLargeWarningDialog = ({
   );
 };
 
-async function logGeminiResults(results: FuriganaResult[]): Promise<void> {
+async function callGemini(results: FuriganaResult[]): Promise<void> {
   // Format results to JSON
   const formatResults = () => {
     if (results.length === 0) {
       return "No results available.";
     }
 
-    const jsonData = results.map((result) => ({
+    // Filter out results with zero length tokens
+    const filteredResults = results.filter((result) => result.tokens.length > 0);
+
+    if (filteredResults.length === 0) {
+      return "No results available.";
+    }
+
+    const jsonData = filteredResults.map((result) => ({
       originalText: result.originalText,
       tokens: result.tokens.map((token) => ({
         original: token.original,
@@ -218,7 +225,7 @@ function handleAndObserveJapaneseElements(initialElements: Element[], selector: 
     browser.runtime.sendMessage(ExtEvent.MarkActiveTab);
     addFurigana(...initialElements).then(async (results) => {
       // Log results to console
-      await logGeminiResults(results);
+      await callGemini(results);
     });
   }
   const observer = new MutationObserver((records) => {

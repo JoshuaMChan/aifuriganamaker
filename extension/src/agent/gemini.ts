@@ -33,6 +33,8 @@ export async function gemini(
   const apiKey = import.meta.env.VITE_GEMINI_API_KEY as string;
   const ai = new GoogleGenAI({ apiKey });
 
+  console.error(`input: ${prompt.substring(0, 1000)}`);
+
   const response = await ai.models.generateContent({
     model,
     contents: prompt,
@@ -46,6 +48,8 @@ export async function gemini(
     (anyResponse.response && typeof anyResponse.response.text === "function"
       ? anyResponse.response.text()
       : anyResponse.text) ?? "";
+
+  console.error(`output: ${text.substring(0, 1000)}`);
 
   return text;
 }
