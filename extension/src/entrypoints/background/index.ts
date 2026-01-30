@@ -1,3 +1,4 @@
+import { registerOnCallGeminiMessage } from "./listeners/onCallGeminiMessage";
 import { registerOnCommand } from "./listeners/onCommand";
 import { registerOnCtxMenuClick } from "./listeners/onCtxMenuClick";
 import { registerOnGetKanjiMarksMessage } from "./listeners/onGetKanjiMarksMessage";
@@ -19,5 +20,6 @@ export default defineBackground({
     registerOnGetSelector();
     registerOnMarkActiveMessage();
     registerOnOpenOptionsMessage();
+    registerOnCallGeminiMessage();
   },
 });

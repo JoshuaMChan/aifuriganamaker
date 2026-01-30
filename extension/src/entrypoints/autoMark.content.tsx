@@ -7,12 +7,11 @@ import { StrictMode, useEffect, useRef } from "react";
 import { createRoot } from "react-dom/client";
 import { addFurigana, type FuriganaResult } from "@/commons/addFurigana";
 import { ExtEvent, ExtStorage } from "@/commons/constants";
-import { sendMessage } from "@/commons/message";
 import { cn, getGeneralSettings, getMoreSettings, setMoreSettings } from "@/commons/utils";
 
 import "@/tailwind.css";
-import { gemini } from "@/agent/gemini.ts";
 import { audit } from "@/agent/prompt.ts";
+import { sendMessage } from "@/commons/message";
 
 export default defineContentScript({
   matches: ["*://*/*"],
@@ -222,7 +221,7 @@ const FuriganaResultsPopup = ({ geminiResponse, onClose }: FuriganaResultsPopupP
 
       <div className="mb-4 max-h-96 overflow-y-auto">
         <pre className="whitespace-pre-wrap rounded-lg bg-slate-50 p-4 font-mono text-slate-700 text-sm dark:bg-slate-800 dark:text-slate-300">
-          {geminiResponse}
+          {geminiResponse.length > 500 ? `${geminiResponse.substring(0, 500)}...` : geminiResponse}
         </pre>
       </div>
 
@@ -272,14 +271,15 @@ async function showFuriganaResultsPopup(results: FuriganaResult[], ctx: any): Pr
     return JSON.stringify(jsonData, null, 2);
   };
 
-  // Call Gemini API before rendering popup
+  // Call Gemini API via background script (content scripts can't make cross-origin requests)
   let geminiResponse: string;
   try {
     const jsonData = formatResults();
-
     const prompt = audit(jsonData);
 
-    geminiResponse = await gemini(prompt);
+    // Call Gemini API through background script
+    const result = await sendMessage("callGemini", { prompt });
+    geminiResponse = result.response;
   } catch (error) {
     geminiResponse = `Error: ${error instanceof Error ? error.message : String(error)}`;
   }

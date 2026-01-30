@@ -30,6 +30,12 @@ export async function addFurigana(...elements: Element[]): Promise<FuriganaResul
 
   for (const text of japaneseTexts) {
     const originalText = text.textContent ?? "";
+
+    // Skip empty strings (including spaces, tabs, and newlines)
+    if (!originalText.trim()) {
+      continue;
+    }
+
     const tokens: KanjiMark[] = await tokenize(originalText);
 
     // Save a copy in memory for later Gemini auditing / correction.

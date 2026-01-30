@@ -20,6 +20,6 @@ export function audit(json: string): string {
     ${json}
 
     ## Out format
-    Exact an array of indexs of wrong tokens from the token list. Nothing more.
+    Exact an int array of indexs of wrong tokens from the token list. Nothing more.
   `;
 }
