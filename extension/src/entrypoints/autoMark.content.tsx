@@ -219,13 +219,15 @@ async function callGemini(results: FuriganaResult[]): Promise<void> {
 
 const isElement = (node: Node): node is Element => node.nodeType === Node.ELEMENT_NODE;
 function handleAndObserveJapaneseElements(initialElements: Element[], selector: string) {
-  // Observer will not observe the element that is loaded for the first time on the page,
-  // so it needs to execute `addFurigana` once immediately.
+
   if (initialElements.length > 0) {
     browser.runtime.sendMessage(ExtEvent.MarkActiveTab);
     addFurigana(...initialElements).then(async (results) => {
-      // Log results to console
-      await callGemini(results);
+      try {
+        await callGemini(results);
+      } catch (error) {
+        console.error("Error calling Gemini:", error instanceof Error ? error.message : String(error));
+      }
     });
   }
   const observer = new MutationObserver((records) => {
