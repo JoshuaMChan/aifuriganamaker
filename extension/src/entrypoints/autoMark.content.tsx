@@ -56,7 +56,7 @@ export default defineContentScript({
     const alwaysRunSites = await getMoreSettings(ExtStorage.AlwaysRunSites);
     const isAlwaysRunSite = alwaysRunSites.includes(location.hostname);
     if (!isPageTooLarge || isAlwaysRunSite) {
-      handleAndObserveJapaneseElements(initialElements, selector, ctx);
+      handleAndObserveJapaneseElements(initialElements, selector);
       return;
     }
 
@@ -89,11 +89,11 @@ export default defineContentScript({
               }}
               onRunOnce={() => {
                 ui.remove();
-                handleAndObserveJapaneseElements(initialElements, selector, ctx);
+                handleAndObserveJapaneseElements(initialElements, selector);
               }}
               onAlwaysRun={async () => {
                 ui.remove();
-                handleAndObserveJapaneseElements(initialElements, selector, ctx);
+                handleAndObserveJapaneseElements(initialElements, selector);
                 await setMoreSettings(ExtStorage.AlwaysRunSites, [
                   ...(await getMoreSettings(ExtStorage.AlwaysRunSites)),
                   location.hostname,
@@ -182,78 +182,7 @@ const PageTooLargeWarningDialog = ({
   );
 };
 
-interface FuriganaResultsPopupProps {
-  geminiResponse: string;
-  onClose: () => void;
-}
-
-const FuriganaResultsPopup = ({ geminiResponse, onClose }: FuriganaResultsPopupProps) => {
-  const dialogRef = useRef<HTMLDialogElement>(null);
-
-  useEffect(() => {
-    dialogRef.current?.showModal();
-  }, []);
-
-  return (
-    <dialog
-      ref={dialogRef}
-      onClose={onClose}
-      className={cn(
-        "-translate-x-1/2 -translate-y-1/2 fixed top-1/2 left-1/2 z-50 flex max-w-2xl transform flex-col rounded-2xl bg-white p-6 text-base text-slate-800 shadow-xl dark:bg-slate-900 dark:text-white",
-        window.matchMedia("(prefers-color-scheme: dark)").matches && "dark",
-      )}
-    >
-      <div className="mb-4 flex items-center justify-between">
-        <h1 className="flex items-center gap-2 font-bold text-lg">
-          <i className="i-tabler-database-filled size-6 text-emerald-500" />
-          <span>📝 Gemini Audit Results</span>
-        </h1>
-        <button
-          className="flex size-6 cursor-pointer items-center justify-center rounded-md transition hover:bg-slate-100 hover:text-emerald-500 focus-visible:bg-slate-100 focus-visible:text-emerald-500 dark:focus-visible:bg-slate-800 dark:hover:bg-slate-800"
-          onClick={() => {
-            dialogRef.current?.close();
-            onClose();
-          }}
-        >
-          <i className="i-tabler-x size-4" />
-        </button>
-      </div>
-
-      <div className="mb-4 max-h-96 overflow-y-auto">
-        <pre className="whitespace-pre-wrap rounded-lg bg-slate-50 p-4 font-mono text-slate-700 text-sm dark:bg-slate-800 dark:text-slate-300">
-          {geminiResponse.length > 500 ? `${geminiResponse.substring(0, 500)}...` : geminiResponse}
-        </pre>
-      </div>
-
-      <div className="flex justify-end">
-        <button
-          className="inline-flex cursor-pointer justify-center rounded-md border border-transparent bg-emerald-600 px-4 py-2 font-semibold text-sm text-white transition hover:bg-emerald-500 focus:outline-hidden focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2"
-          onClick={() => {
-            dialogRef.current?.close();
-            onClose();
-          }}
-        >
-          Close
-        </button>
-      </div>
-    </dialog>
-  );
-};
-
-// Declare createShadowRootUi type for TypeScript
-type ShadowRootUI = {
-  mount: () => void;
-  remove: () => void;
-};
-
-let currentResultsPopup: ShadowRootUI | null = null;
-
-async function showFuriganaResultsPopup(results: FuriganaResult[], ctx: any): Promise<void> {
-  if (currentResultsPopup) {
-    currentResultsPopup.remove();
-    currentResultsPopup = null;
-  }
-
+async function logGeminiResults(results: FuriganaResult[]): Promise<void> {
   // Format results to JSON
   const formatResults = () => {
     if (results.length === 0) {
@@ -272,60 +201,24 @@ async function showFuriganaResultsPopup(results: FuriganaResult[], ctx: any): Pr
   };
 
   // Call Gemini API via background script (content scripts can't make cross-origin requests)
-  let geminiResponse: string;
   try {
     const jsonData = formatResults();
     const prompt = audit(jsonData);
 
     // Call Gemini API through background script
-    const result = await sendMessage("callGemini", { prompt });
-    geminiResponse = result.response;
-  } catch (error) {
-    geminiResponse = `Error: ${error instanceof Error ? error.message : String(error)}`;
-  }
-
-  // Now render the popup with the Gemini response
-  const ui = await createShadowRootUi(ctx, {
-    name: "furigana-results-popup",
-    position: "inline",
-    anchor: "body",
-    onMount(container) {
-      const wrapper = document.createElement("div");
-      container.appendChild(wrapper);
-      const root = createRoot(wrapper);
-      root.render(
-        <StrictMode>
-          <FuriganaResultsPopup
-            geminiResponse={geminiResponse}
-            onClose={() => {
-              ui.remove();
-              currentResultsPopup = null;
-            }}
-          />
-        </StrictMode>,
-      );
-      return { root, wrapper };
-    },
-    onRemove: (elements) => {
-      elements?.root.unmount();
-      elements?.wrapper.remove();
-      currentResultsPopup = null;
-    },
-  });
-
-  currentResultsPopup = ui;
-  ui.mount();
+    await sendMessage("callGemini", { prompt });
+  } catch (_error) {}
 }
 
 const isElement = (node: Node): node is Element => node.nodeType === Node.ELEMENT_NODE;
-function handleAndObserveJapaneseElements(initialElements: Element[], selector: string, ctx: any) {
+function handleAndObserveJapaneseElements(initialElements: Element[], selector: string) {
   // Observer will not observe the element that is loaded for the first time on the page,
   // so it needs to execute `addFurigana` once immediately.
   if (initialElements.length > 0) {
     browser.runtime.sendMessage(ExtEvent.MarkActiveTab);
     addFurigana(...initialElements).then(async (results) => {
-      // Show popup with results
-      await showFuriganaResultsPopup(results, ctx);
+      // Log results to console
+      await logGeminiResults(results);
     });
   }
   const observer = new MutationObserver((records) => {
