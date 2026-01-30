@@ -33,6 +33,7 @@ export async function gemini(
   const apiKey = import.meta.env.VITE_GEMINI_API_KEY as string;
   const ai = new GoogleGenAI({ apiKey });
 
+  const startTime = performance.now();
   console.log(`input: ${prompt.substring(0, 2000)}`);
 
   const response = await ai.models.generateContent({
@@ -50,6 +51,9 @@ export async function gemini(
       : anyResponse.text) ?? "";
 
   console.log(`output: ${text.substring(0, 2000)}`);
+  const endTime = performance.now();
+  const duration = endTime - startTime;
+  console.log("duration: ", duration.toFixed(2), "ms");
 
   return text;
 }
