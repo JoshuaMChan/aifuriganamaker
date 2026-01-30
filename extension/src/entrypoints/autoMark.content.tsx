@@ -183,16 +183,21 @@ const PageTooLargeWarningDialog = ({
 };
 
 async function callGemini(results: FuriganaResult[]): Promise<void> {
+  console.log("[callGemini] Starting, results count:", results.length);
+
   // Format results to JSON
   const formatResults = () => {
     if (results.length === 0) {
+      console.log("[callGemini] No results available");
       return "No results available.";
     }
 
     // Filter out results with zero length tokens
     const filteredResults = results.filter((result) => result.tokens.length > 0);
+    console.log("[callGemini] Filtered results count:", filteredResults.length, "out of", results.length);
 
     if (filteredResults.length === 0) {
+      console.log("[callGemini] No results with tokens available");
       return "No results available.";
     }
 
@@ -210,11 +215,22 @@ async function callGemini(results: FuriganaResult[]): Promise<void> {
   // Call Gemini API via background script (content scripts can't make cross-origin requests)
   try {
     const jsonData = formatResults();
+
+    if (jsonData === "No results available.") {
+      console.log("[callGemini] Skipping API call - no results");
+      return;
+    }
+
     const prompt = audit(jsonData);
+    console.log("[callGemini] Calling Gemini API, prompt length:", prompt.length);
 
     // Call Gemini API through background script
-    await sendMessage("callGemini", { prompt });
-  } catch (_error) {}
+    const result = await sendMessage("callGemini", { prompt });
+    console.log("[callGemini] Gemini response received:", result.response.substring(0, 200));
+  } catch (error) {
+    console.error(error instanceof Error ? error.message : String(error));
+    throw error; // Re-throw to be caught by outer try-catch
+  }
 }
 
 const isElement = (node: Node): node is Element => node.nodeType === Node.ELEMENT_NODE;
@@ -226,7 +242,6 @@ function handleAndObserveJapaneseElements(initialElements: Element[], selector: 
       try {
         await callGemini(results);
       } catch (error) {
-        console.error("Error calling Gemini:", error instanceof Error ? error.message : String(error));
       }
     });
   }
