@@ -41,11 +41,8 @@ export async function gemini(
     contents: prompt,
   });
 
-  // `@google/genai` SDK 直接返回对象，不是 fetch Response。
-  // 根据官方示例，结果文本在 `response.text`（或 `response.response.text()`）里。
   const anyResponse: any = response;
   const text: string =
-    // 新版 SDK 通常是 response.response.text()
     (anyResponse.response && typeof anyResponse.response.text === "function"
       ? anyResponse.response.text()
       : anyResponse.text) ?? "";
@@ -54,6 +51,7 @@ export async function gemini(
   const endTime = performance.now();
   const duration = endTime - startTime;
   console.log("duration: ", duration.toFixed(2), "ms");
+  console.log("# of tokens: ", response.usageMetadata);
 
   return text;
 }
