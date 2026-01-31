@@ -24,7 +24,7 @@ export type GeminiModelType = (typeof GeminiModel)[keyof typeof GeminiModel];
  * Default model to use
  * Change this to switch models easily
  */
-const DEFAULT_MODEL: GeminiModelType = GeminiModel.FLASH_3_PREVIEW;
+const DEFAULT_MODEL: GeminiModelType = GeminiModel.FLASH_LITE_2_5;
 
 export async function gemini(
   prompt: string,

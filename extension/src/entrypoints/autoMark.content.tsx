@@ -3,15 +3,16 @@
  * in sync with the extension’s internal settings.
  */
 import picomatch from "picomatch/posix";
-import { StrictMode, useEffect, useRef } from "react";
-import { createRoot } from "react-dom/client";
-import { addFurigana, type FuriganaResult } from "@/commons/addFurigana";
-import { ExtEvent, ExtStorage } from "@/commons/constants";
-import { cn, getGeneralSettings, getMoreSettings, setMoreSettings } from "@/commons/utils";
+import {StrictMode, useEffect, useRef} from "react";
+import {createRoot} from "react-dom/client";
+import {addFurigana, type FuriganaResult} from "@/commons/addFurigana";
+import {ExtEvent, ExtStorage} from "@/commons/constants";
+import {cn, getGeneralSettings, getMoreSettings, setMoreSettings} from "@/commons/utils";
 
 import "@/tailwind.css";
-import { audit } from "@/agent/prompt.ts";
-import { sendMessage } from "@/commons/message";
+import {audit} from "@/agent/prompt.ts";
+import {sendMessage} from "@/commons/message";
+import {promptCompress} from "@/agent/furiganaPrompt.ts";
 
 export default defineContentScript({
   matches: ["*://*/*"],
@@ -21,7 +22,7 @@ export default defineContentScript({
   async main(ctx) {
     const autoModeIsEnabled = await getGeneralSettings(ExtStorage.AutoMode);
     const excludeSites = await getMoreSettings(ExtStorage.ExcludeSites);
-    const isMatch = picomatch(excludeSites, { nocase: true });
+    const isMatch = picomatch(excludeSites, {nocase: true});
     const isExcluded = isMatch(location.hostname);
     if (!autoModeIsEnabled || isExcluded) {
       /**
@@ -31,7 +32,7 @@ export default defineContentScript({
       return;
     }
 
-    const customRule = await sendMessage("getSelector", { domain: location.hostname });
+    const customRule = await sendMessage("getSelector", {domain: location.hostname});
     const selector = customRule.selector || "[lang='ja'], [lang='ja-JP']";
     const initialElements = Array.from(document.querySelectorAll(selector));
 
@@ -47,6 +48,7 @@ export default defineContentScript({
 
       return textLength;
     }
+
     const textLength = getTextLength();
     const formatter = new Intl.NumberFormat(browser.i18n.getUILanguage());
     const formattedTextLength = formatter.format(textLength);
@@ -103,7 +105,7 @@ export default defineContentScript({
             />
           </StrictMode>,
         );
-        return { root, wrapper };
+        return {root, wrapper};
       },
       onRemove: (elements) => {
         elements?.root.unmount();
@@ -120,12 +122,13 @@ interface PageTooLargeWarningDialogProps {
   onAlwaysRun: () => void;
   formattedTextLength: string;
 }
+
 const PageTooLargeWarningDialog = ({
-  onClose,
-  onRunOnce,
-  onAlwaysRun,
-  formattedTextLength,
-}: PageTooLargeWarningDialogProps) => {
+                                     onClose,
+                                     onRunOnce,
+                                     onAlwaysRun,
+                                     formattedTextLength,
+                                   }: PageTooLargeWarningDialogProps) => {
   const dialogRef = useRef<HTMLDialogElement>(null);
   useEffect(() => {
     dialogRef.current?.showModal();
@@ -141,14 +144,14 @@ const PageTooLargeWarningDialog = ({
     >
       <div className="flex items-center justify-between">
         <h1 className="flex items-center gap-1 font-bold text-lg">
-          <i className="i-tabler-alert-circle-filled size-6 text-sky-500" />
+          <i className="i-tabler-alert-circle-filled size-6 text-sky-500"/>
           <span>{browser.i18n.getMessage("contentScriptWarningTitle")}</span>
         </h1>
         <button
           className="flex size-6 cursor-pointer items-center justify-center rounded-md transition hover:bg-slate-100 hover:text-sky-500 focus-visible:bg-slate-100 focus-visible:text-sky-500 dark:focus-visible:bg-slate-800 dark:hover:bg-slate-800"
           onClick={() => dialogRef.current?.close()}
         >
-          <i className="i-tabler-x size-4" />
+          <i className="i-tabler-x size-4"/>
         </button>
       </div>
       <p className="mt-2.5">
@@ -185,48 +188,30 @@ const PageTooLargeWarningDialog = ({
 async function callGemini(results: FuriganaResult[]): Promise<void> {
   console.log("[callGemini] Starting, results count:", results.length);
 
-  // Format results to JSON
-  const formatResults = () => {
-    if (results.length === 0) {
-      console.log("[callGemini] No results available");
-      return "No results available.";
-    }
+  // Optimize results for token-efficient prompt usage
+  const optimizedData = promptCompress(results);
 
-    // Filter out results with zero length tokens
-    const filteredResults = results.filter((result) => result.tokens.length > 0);
-    console.log("[callGemini] Filtered results count:", filteredResults.length, "out of", results.length);
+  if (optimizedData === "") {
+    console.log("[callGemini] No results with tokens available, skipping API call");
+    return;
+  }
 
-    if (filteredResults.length === 0) {
-      console.log("[callGemini] No results with tokens available");
-      return "No results available.";
-    }
-
-    const jsonData = filteredResults.map((result) => ({
-      originalText: result.originalText,
-      tokens: result.tokens.map((token) => ({
-        original: token.original,
-        reading: token.reading,
-      })),
-    }));
-
-    return JSON.stringify(jsonData, null, 2);
-  };
+  console.log("[callGemini] Optimized data length:", optimizedData.length);
+  console.log("[callGemini] Optimized data preview:", optimizedData.substring(0, 200));
 
   // Call Gemini API via background script (content scripts can't make cross-origin requests)
   try {
-    const jsonData = formatResults();
-
-    if (jsonData === "No results available.") {
-      console.log("[callGemini] Skipping API call - no results");
-      return;
-    }
-
-    const prompt = audit(jsonData);
+    const prompt = audit(promptCompress(results));
     console.log("[callGemini] Calling Gemini API, prompt length:", prompt.length);
 
     // Call Gemini API through background script
-    const result = await sendMessage("callGemini", { prompt });
-    console.log("[callGemini] Gemini response received:", result.response.substring(0, 200));
+    const startTime = performance.now();
+    const result = await sendMessage("callGemini", {prompt});
+    const endTime = performance.now();
+    const duration = endTime - startTime;
+
+    console.log("[callGemini] Gemini API call completed in", duration.toFixed(2), "ms");
+    console.log("[callGemini] Gemini response:", result.response);
   } catch (error) {
     console.error(error instanceof Error ? error.message : String(error));
     throw error; // Re-throw to be caught by outer try-catch
@@ -234,6 +219,7 @@ async function callGemini(results: FuriganaResult[]): Promise<void> {
 }
 
 const isElement = (node: Node): node is Element => node.nodeType === Node.ELEMENT_NODE;
+
 function handleAndObserveJapaneseElements(initialElements: Element[], selector: string) {
 
   if (initialElements.length > 0) {
@@ -257,5 +243,5 @@ function handleAndObserveJapaneseElements(initialElements: Element[], selector: 
     }
   });
 
-  observer.observe(document.body, { childList: true, subtree: true });
+  observer.observe(document.body, {childList: true, subtree: true});
 }
