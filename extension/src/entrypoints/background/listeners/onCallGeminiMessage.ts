@@ -4,7 +4,8 @@ import { onMessage } from "@/commons/message";
 export const registerOnCallGeminiMessage = () => {
   onMessage("callGemini", async ({ data }) => {
     try {
-      const response = await gemini(data.prompt);
+      console.log(data.prompt);
+      // const response = await gemini(data.prompt);
       return { response };
     } catch (error) {
       throw new Error(

@@ -3,10 +3,8 @@ import type { FuriganaResult } from "@/commons/addFurigana";
 /**
  * Optimizes FuriganaResult array for token-efficient prompt usage.
  *
- * Format: "original,reading;original,reading;" for each result.
- * Multiple results are separated by newlines.
- *
- * Example: "黒,くろ;白,しろ;\n猫,ねこ;"
+ * Format: Reconstructs the original text with furigana in parentheses.
+ * Example: "振(ふ)り仮名(かな)"
  *
  * @param results - Array of FuriganaResult to optimize
  * @returns Compact string format optimized for token usage
@@ -23,10 +21,25 @@ export function promptCompress(results: FuriganaResult[]): string {
     return "";
   }
 
-  // Format: "original,reading;original,reading;" for each result
+  // Format: Reconstruct text with furigana in parentheses like "振(ふ)り仮名(かな)"
   const formattedResults = filteredResults.map((result) => {
-    const tokenPairs = result.tokens.map((token) => `${token.original},${token.reading}`);
-    return tokenPairs.join(";") + ";";
+    const { originalText, tokens } = result;
+    
+    // Sort tokens by start position (descending) to insert from end to start
+    const sortedTokens = [...tokens].sort((a, b) => b.start - a.start);
+    
+    // Build the result string by inserting furigana from right to left
+    let resultText = originalText;
+    for (const token of sortedTokens) {
+      const before = resultText.substring(0, token.start);
+      const tokenText = resultText.substring(token.start, token.end);
+      const after = resultText.substring(token.end);
+      
+      // Replace token with "original(reading)" format
+      resultText = before + `${tokenText}(${token.reading})` + after;
+    }
+    
+    return resultText;
   });
 
   // Join multiple results with newlines
