@@ -21,27 +21,42 @@ export function promptCompress(results: FuriganaResult[]): string {
     return "";
   }
 
-  // Format: Reconstruct text with furigana in parentheses like "振(ふ)り仮名(かな)"
-  const formattedResults = filteredResults.map((result) => {
-    const { originalText, tokens } = result;
+  // Format: Combine all originalText into one line, then all tokens with adjusted indices
+  // Example:
+  // 振り仮名漢字
+  // 0,振,ふ
+  // 1,仮名,がな
+  // 4,漢字,かんじ
 
-    // Sort tokens by start position (descending) to insert from end to start
-    const sortedTokens = [...tokens].sort((a, b) => b.start - a.start);
+  // Combine all originalText into one continuous string
+  const combinedText = filteredResults.map((result) => result.originalText).join("");
 
-    // Build the result string by inserting furigana from right to left
-    let resultText = originalText;
-    for (const token of sortedTokens) {
-      const before = resultText.substring(0, token.start);
-      const tokenText = resultText.substring(token.start, token.end);
-      const after = resultText.substring(token.end);
-
-      // Replace token with "original(reading)" format
-      resultText = before + `${tokenText}(${token.reading})` + after;
+  // Collect all tokens with adjusted indices
+  const allTokens: Array<{ index: number; original: string; reading: string }> = [];
+  let offset = 0;
+  
+  for (let i = 0; i < filteredResults.length; i++) {
+    const result = filteredResults[i]!;
+    for (const token of result.tokens) {
+      // Adjust index based on the cumulative offset
+      allTokens.push({
+        index: offset + token.start,
+        original: token.original,
+        reading: token.reading,
+      });
     }
+    // Update offset for next result (add text length + newline if not last)
+    offset += result.originalText.length;
+    if (i < filteredResults.length - 1) {
+      offset += 1; // Add 1 for the newline character
+    }
+  }
 
-    return resultText;
-  });
+  // Build output: first line is combined text, then CSV lines for tokens
+  const lines = [combinedText];
+  for (const token of allTokens) {
+    lines.push(`${token.index},${token.original},${token.reading}`);
+  }
 
-  // Join multiple results with newlines
-  return formattedResults.join("\n");
+  return lines.join("\n");
 }
