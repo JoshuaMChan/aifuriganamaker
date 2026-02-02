@@ -15,7 +15,7 @@ export const registerOnInstalled = () => {
 
     switch (details.reason) {
       case browser.runtime.OnInstalledReason.INSTALL: {
-        browser.tabs.create({ url: "https://furiganamaker.app/welcome" });
+        // Welcome page redirect removed
         break;
       }
     }

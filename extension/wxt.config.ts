@@ -33,7 +33,7 @@ export default defineConfig({
     description: "__MSG_extDescription__",
     permissions: ["contextMenus", "storage"],
     default_locale: "en",
-    homepage_url: "https://furiganamaker.app",
+    homepage_url: undefined,
     commands,
   },
   webExt: {
