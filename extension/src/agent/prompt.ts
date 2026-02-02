@@ -1,11 +1,13 @@
 export function audit(input: string): string {
   return `
 Check furigana readings. CSV format: index,kanji,reading.
-Return JSON array of wrong indices only. Most are correct, so output is usually [] or [1-2 indices]. Be strict.
+Return JSON dictionary of corrected kana.
 
 Input:
 ${input}
 
-Output: JSON array of integers, e.g. [] or [2] or [5,10]
+Output:
+1. JSON dictionary of {integers:string},
+e.g. {} or {1:'かな'}
   `;
 }
