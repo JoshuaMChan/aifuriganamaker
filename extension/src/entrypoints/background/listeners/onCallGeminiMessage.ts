@@ -6,7 +6,8 @@ export const registerOnCallGeminiMessage = () => {
     try {
       console.log(data.prompt);
       // const response = await gemini(data.prompt);
-      return { response };
+      return '';
+      // return { response };
     } catch (error) {
       throw new Error(
         `Gemini API error: ${error instanceof Error ? error.message : String(error)}`,
