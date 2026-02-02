@@ -29,7 +29,7 @@ export function promptCompress(results: FuriganaResult[]): string {
   // 4,漢字,かんじ
 
   // Combine all originalText into one continuous string
-  let combinedText = filteredResults.map((result) => result.originalText).join("\n");
+  let combinedText = "\n" + filteredResults.map((result) => result.originalText).join("\n");
   combinedText += "\n";
   // Collect all tokens with adjusted indices
   const allTokens: Array<{ index: number; original: string; reading: string }> = [];
