@@ -1,4 +1,4 @@
-// import { GoogleGenAI } from "@google/genai";
+import { GoogleGenAI } from "@google/genai";
 
 /**
  * Supported Gemini models and agents
@@ -30,30 +30,28 @@ export async function gemini(
   prompt: string,
   model: GeminiModelType = DEFAULT_MODEL,
 ): Promise<string> {
-  // const apiKey = import.meta.env.VITE_GEMINI_API_KEY as string;
-  // const ai = new GoogleGenAI({ apiKey });
+  const apiKey = import.meta.env.VITE_GEMINI_API_KEY as string;
+  const ai = new GoogleGenAI({ apiKey });
 
-  // const startTime = performance.now();
+  const startTime = performance.now();
   console.log(`input: ${prompt}`);
 
-  return model;
+  const response = await ai.models.generateContent({
+    model,
+    contents: prompt,
+  });
 
-  // const response = await ai.models.generateContent({
-  //   model,
-  //   contents: prompt,
-  // });
-  //
-  // const anyResponse: any = response;
-  // const text: string =
-  //   (anyResponse.response && typeof anyResponse.response.text === "function"
-  //     ? anyResponse.response.text()
-  //     : anyResponse.text) ?? "";
-  //
-  // console.log(`output: ${text}`);
-  // const endTime = performance.now();
-  // const duration = endTime - startTime;
-  // console.log("duration: ", duration.toFixed(2), "ms");
-  // console.log("# of tokens: ", response.usageMetadata);
-  //
-  // return text;
+  const anyResponse: any = response;
+  const text: string =
+    (anyResponse.response && typeof anyResponse.response.text === "function"
+      ? anyResponse.response.text()
+      : anyResponse.text) ?? "";
+
+  console.log(`output: ${text}`);
+  const endTime = performance.now();
+  const duration = endTime - startTime;
+  console.log("duration: ", duration.toFixed(2), "ms");
+  console.log("# of tokens: ", response.usageMetadata);
+
+  return text;
 }
