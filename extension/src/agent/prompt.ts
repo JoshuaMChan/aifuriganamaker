@@ -1,9 +1,9 @@
 export function audit(input: string): string {
   return `
     ## Task
-    Audit the wrong pairs of 振り仮名. Give the wrong pairs by an exact int array of indices of the input array. Nothing more.
+    Audit the wrong pairs of 振り仮名. Give the wrong pairs with the exact syntax as input.
 
-    ## Input format example
+    ## Format example
     振り,ふり;仮名,かな;
 
     ## Input Data
