@@ -1,8 +1,8 @@
 export function audit(input: string): string {
   return `
     ## Task
-    Correct the each line of the input of 振り仮名 inside of the parameters.
-    If the line is wrong with 振り仮名, correct it. Only shows the lines that was wrong and corrected.
+    Correct each line of the input for 振り仮名 inside the parameters.
+    If a line has incorrect 振り仮名, correct it. Only show the lines that were wrong and corrected.
 
     ## Input Data
     ${input}
