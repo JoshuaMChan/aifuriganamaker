@@ -212,15 +212,6 @@ async function callGemini(results: FuriganaResult[]): Promise<void> {
 
     console.log("[callGemini] Gemini API call completed in", duration.toFixed(2), "ms");
     console.log("[callGemini] Gemini response:", result.response);
-    
-    // Parse the JSON response (should be an array of integers)
-    try {
-      const indices: number[] = JSON.parse(result.response);
-      console.log("[callGemini] Parsed indices array:", indices);
-      // TODO: Use these indices to correct the furigana readings
-    } catch (parseError) {
-      console.error("[callGemini] Failed to parse JSON response:", parseError);
-    }
   } catch (error) {
     console.error(error instanceof Error ? error.message : String(error));
     throw error; // Re-throw to be caught by outer try-catch
