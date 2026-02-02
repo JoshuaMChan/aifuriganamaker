@@ -12,7 +12,7 @@ import {cn, getGeneralSettings, getMoreSettings, setMoreSettings} from "@/common
 import "@/tailwind.css";
 import {audit} from "@/agent/prompt.ts";
 import {sendMessage} from "@/commons/message";
-import {promptCompressSingle} from "@/agent/furiganaPrompt.ts";
+import {promptCompress} from "@/agent/furiganaPrompt.ts";
 
 export default defineContentScript({
   matches: ["*://*/*"],
@@ -216,11 +216,11 @@ function backtrackWrongKanji(
 
   for (let i = 0; i < filteredResults.length; i++) {
     const result = filteredResults[i]!;
-
+    
     for (const token of result.tokens) {
       // Calculate adjusted index (same as in promptCompress)
       const adjustedIndex = offset + token.start;
-
+      
       // Check if this token's index is in the wrong indices list
       if (indices.includes(adjustedIndex)) {
         wrongKanji.push({
@@ -233,7 +233,7 @@ function backtrackWrongKanji(
         });
       }
     }
-
+    
     // Update offset for next result (same as promptCompress)
     offset += result.originalText.length;
     if (i < filteredResults.length - 1) {
@@ -245,84 +245,63 @@ function backtrackWrongKanji(
 }
 
 async function callGemini(results: FuriganaResult[]): Promise<void> {
-  // Filter results with tokens
-  const filteredResults = results.filter((result) => result.tokens.length > 0);
-  const totalLines = filteredResults.length;
+  console.log("[callGemini] Starting, results count:", results.length);
 
-  console.log("[callGemini] Starting, total lines:", totalLines);
+  // Optimize results for token-efficient prompt usage
+  const optimizedData = promptCompress(results);
 
-  if (totalLines === 0) {
+  if (optimizedData === "") {
     console.log("[callGemini] No results with tokens available, skipping API call");
     return;
   }
 
-  // Process each line (FuriganaResult) one at a time
-  let totalPromptTokens = 0;
-  let totalCandidatesTokens = 0;
-  let totalTokens = 0;
+  console.log("[callGemini] Optimized data length:", optimizedData.length);
+  console.log("[callGemini] Optimized data preview:", optimizedData.substring(0, 200));
 
-  for (let i = 0; i < filteredResults.length; i++) {
-    const result = filteredResults[i]!;
-    const lineNumber = i + 1;
+  // Call Gemini API via background script (content scripts can't make cross-origin requests)
+  try {
+    const prompt = audit(promptCompress(results));
+    console.log("[callGemini] Calling Gemini API, prompt length:", prompt.length);
 
+    // Call Gemini API through background script
+    const startTime = performance.now();
+    const result = await sendMessage("callGemini", {prompt});
+    const endTime = performance.now();
+    const duration = endTime - startTime;
+
+    console.log("[callGemini] Gemini API call completed in", duration.toFixed(2), "ms");
+    console.log("[callGemini] Gemini response:", result.response);
+    
+    // Parse the JSON response (should be an array of integers)
     try {
-      // Compress single result for prompt
-      const singleLineData = promptCompressSingle(result);
-      const prompt = audit(singleLineData);
-
-      console.log(`[callGemini] Processing line ${lineNumber}/${totalLines}`);
-
-      // Call Gemini API through background script
-      const startTime = performance.now();
-      const apiResult = await sendMessage("callGemini", {prompt});
-      const endTime = performance.now();
-      const duration = endTime - startTime;
-
-      // Accumulate token counts
-      if (apiResult.usageMetadata) {
-        const promptTokens = apiResult.usageMetadata.promptTokenCount || 0;
-        const candidatesTokens = apiResult.usageMetadata.candidatesTokenCount || 0;
-        const lineTotalTokens = apiResult.usageMetadata.totalTokenCount || 0;
-
-        totalPromptTokens += promptTokens;
-        totalCandidatesTokens += candidatesTokens;
-        totalTokens += lineTotalTokens;
-
-        console.log(`[callGemini] Line ${lineNumber} tokens: prompt=${promptTokens}, candidates=${candidatesTokens}, total=${lineTotalTokens}`);
-      }
-
-      console.log(`[callGemini] Line ${lineNumber} completed in ${duration.toFixed(2)}ms`);
-      console.log(`[callGemini] Line ${lineNumber} response:`, apiResult.response);
-
-      // Parse CSV response (format: index,correction per line)
-      if (apiResult.response.trim()) {
-        const corrections = apiResult.response.trim().split("\n").filter(line => line.trim());
-        if (corrections.length > 0) {
-          console.log(`[callGemini] Line ${lineNumber} corrections:`, corrections);
-          corrections.forEach((correction) => {
-            const [index, correctedReading] = correction.split(",");
-            if (index && correctedReading) {
-              const tokenIndex = parseInt(index, 10);
-              const token = result.tokens.find(t => t.start === tokenIndex);
-              if (token) {
-                console.log(`[callGemini] Line ${lineNumber} correction: ${token.original}(${token.reading}) → ${correctedReading}`);
-              }
-            }
-          });
-        } else {
-          console.log(`[callGemini] Line ${lineNumber}: ✓ All readings correct`);
-        }
+      const indices: number[] = JSON.parse(result.response);
+      console.log("[callGemini] Parsed indices array:", indices);
+      
+      // Backtrack wrong kanji by indices and print them
+      if (indices.length > 0) {
+        const wrongKanji = backtrackWrongKanji(results, indices);
+        console.log(`[callGemini] Found ${wrongKanji.length} wrong kanji:`);
+        wrongKanji.forEach((item, idx) => {
+          // Compress originalText: show context around the wrong kanji (max 30 chars each side)
+          const contextStart = Math.max(0, item.positionInLine - 30);
+          const contextEnd = Math.min(item.originalText.length, item.positionInLine + item.original.length + 30);
+          const context = item.originalText.substring(contextStart, contextEnd);
+          const marker = " ".repeat(Math.max(0, item.positionInLine - contextStart)) + "^".repeat(item.original.length);
+          
+          console.log(`[callGemini] ${idx + 1}. [${item.index}] ${item.original}(${item.reading})`);
+          console.log(`  Context: ${context}`);
+          console.log(`  ${marker} ← Wrong`);
+        });
       } else {
-        console.log(`[callGemini] Line ${lineNumber}: ✓ All readings correct`);
+        console.log("[callGemini] ✓ All readings are correct!");
       }
-    } catch (error) {
-      console.error(`[callGemini] Error processing line ${lineNumber}:`, error instanceof Error ? error.message : String(error));
+    } catch (parseError) {
+      console.error("[callGemini] Failed to parse JSON response:", parseError);
     }
+  } catch (error) {
+    console.error(error instanceof Error ? error.message : String(error));
+    throw error; // Re-throw to be caught by outer try-catch
   }
-
-  // Log summary
-  console.log(`[callGemini] Summary: ${totalLines} lines processed`);
-  console.log(`[callGemini] Total tokens: prompt=${totalPromptTokens}, candidates=${totalCandidatesTokens}, total=${totalTokens}`);
 }
 
 // Store the latest FuriganaResult for manual Gemini calls
