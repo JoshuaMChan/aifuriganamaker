@@ -30,13 +30,13 @@ export async function gemini(
   prompt: string,
   model: GeminiModelType = DEFAULT_MODEL,
 ): Promise<string> {
-  const apiKey = import.meta.env.VITE_GEMINI_API_KEY as string;
-  const ai = new GoogleGenAI({ apiKey });
+  // const apiKey = import.meta.env.VITE_GEMINI_API_KEY as string;
+  // const ai = new GoogleGenAI({ apiKey });
 
-  const startTime = performance.now();
+  // const startTime = performance.now();
   console.log(`input: ${prompt}`);
 
-  return '';
+  return model;
 
   // const response = await ai.models.generateContent({
   //   model,
