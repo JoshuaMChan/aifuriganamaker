@@ -52,7 +52,7 @@ export function Root() {
         />
       </MenuItem>
       <MenuItem icon={<i className="i-tabler-sparkles text-2xl" />}>
-        <Button text="Gemini 監査" onClick={handleCallGemini} />
+        <Button text="AI チェック" onClick={handleCallGemini} />
       </MenuItem>
       <MenuItem icon={<SettingIcon />}>
         <Link href={browser.runtime.getURL("/options.html")} text={t("linkSettings")} />
