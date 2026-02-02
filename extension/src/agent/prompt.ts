@@ -1,13 +1,8 @@
 export function audit(input: string): string {
   return `
     ## Task
-    Audit the wrong pairs of 振り仮名. Give the corrected pairs with the exact syntax as input. Only shows the pairs that were wrong before correction.
-
-    ## Input example
-    振り,ふり;仮名,がな;
-
-    ## Output example
-    仮名,かな;
+    Correct the each line of the input of 振り仮名 in side of the parameters.
+    If the line is wrong with 振り仮名, correct it. Only shows the lines that was wrong and corrected.
 
     ## Input Data
     ${input}
