@@ -185,6 +185,65 @@ const PageTooLargeWarningDialog = ({
   );
 };
 
+/**
+ * Backtrack wrong kanji by indices from the combined text
+ * Returns information about wrong kanji tokens
+ */
+function backtrackWrongKanji(
+  results: FuriganaResult[],
+  indices: number[],
+): Array<{
+  index: number;
+  original: string;
+  reading: string;
+  originalText: string;
+  lineNumber: number;
+  positionInLine: number;
+}> {
+  const wrongKanji: Array<{
+    index: number;
+    original: string;
+    reading: string;
+    originalText: string;
+    lineNumber: number;
+    positionInLine: number;
+  }> = [];
+
+  // Rebuild the index mapping (same logic as promptCompress)
+  // Note: promptCompress adds "\n" at the start, so indices need to account for that
+  const filteredResults = results.filter((result) => result.tokens.length > 0);
+  let offset = 0; // Same as promptCompress - offset starts at 0
+
+  for (let i = 0; i < filteredResults.length; i++) {
+    const result = filteredResults[i]!;
+
+    for (const token of result.tokens) {
+      // Calculate adjusted index (same as in promptCompress)
+      const adjustedIndex = offset + token.start;
+
+      // Check if this token's index is in the wrong indices list
+      if (indices.includes(adjustedIndex)) {
+        wrongKanji.push({
+          index: adjustedIndex,
+          original: token.original,
+          reading: token.reading,
+          originalText: result.originalText,
+          lineNumber: i + 1,
+          positionInLine: token.start,
+        });
+      }
+    }
+
+    // Update offset for next result (same as promptCompress)
+    offset += result.originalText.length;
+    if (i < filteredResults.length - 1) {
+      offset += 1; // Add 1 for the newline character
+    }
+  }
+
+  return wrongKanji;
+}
+
 async function callGemini(results: FuriganaResult[]): Promise<void> {
   console.log("[callGemini] Starting, results count:", results.length);
 
@@ -212,6 +271,31 @@ async function callGemini(results: FuriganaResult[]): Promise<void> {
 
     console.log("[callGemini] Gemini API call completed in", duration.toFixed(2), "ms");
     console.log("[callGemini] Gemini response:", result.response);
+
+    // Parse the JSON response (should be an array of integers)
+    try {
+      const indices: number[] = JSON.parse(result.response);
+      console.log("[callGemini] Parsed indices array:", indices);
+
+      // Backtrack wrong kanji by indices and print them
+      if (indices.length > 0) {
+        const wrongKanji = backtrackWrongKanji(results, indices);
+        console.log("[callGemini] Wrong kanji found:", wrongKanji);
+        wrongKanji.forEach((item, idx) => {
+          console.log(`[callGemini] Wrong kanji ${idx + 1}:`, {
+            index: item.index,
+            original: item.original,
+            reading: item.reading,
+            originalText: item.originalText,
+            position: `line ${item.lineNumber}, position ${item.positionInLine}`,
+          });
+        });
+      } else {
+        console.log("[callGemini] No wrong kanji found - all readings are correct!");
+      }
+    } catch (parseError) {
+      console.error("[callGemini] Failed to parse JSON response:", parseError);
+    }
   } catch (error) {
     console.error(error instanceof Error ? error.message : String(error));
     throw error; // Re-throw to be caught by outer try-catch
