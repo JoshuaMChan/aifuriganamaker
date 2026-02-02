@@ -280,20 +280,18 @@ async function callGemini(results: FuriganaResult[]): Promise<void> {
       // Backtrack wrong kanji by indices and print them
       if (indices.length > 0) {
         const wrongKanji = backtrackWrongKanji(results, indices);
-        console.log(`[callGemini] Found ${wrongKanji.length} wrong kanji:`);
+        console.log("[callGemini] Wrong kanji found:", wrongKanji);
         wrongKanji.forEach((item, idx) => {
-          // Compress originalText: show context around the wrong kanji (max 30 chars each side)
-          const contextStart = Math.max(0, item.positionInLine - 30);
-          const contextEnd = Math.min(item.originalText.length, item.positionInLine + item.original.length + 30);
-          const context = item.originalText.substring(contextStart, contextEnd);
-          const marker = " ".repeat(Math.max(0, item.positionInLine - contextStart)) + "^".repeat(item.original.length);
-          
-          console.log(`[callGemini] ${idx + 1}. [${item.index}] ${item.original}(${item.reading})`);
-          console.log(`  Context: ${context}`);
-          console.log(`  ${marker} ← Wrong`);
+          console.log(`[callGemini] Wrong kanji ${idx + 1}:`, {
+            index: item.index,
+            original: item.original,
+            reading: item.reading,
+            originalText: item.originalText,
+            position: `line ${item.lineNumber}, position ${item.positionInLine}`,
+          });
         });
       } else {
-        console.log("[callGemini] ✓ All readings are correct!");
+        console.log("[callGemini] No wrong kanji found - all readings are correct!");
       }
     } catch (parseError) {
       console.error("[callGemini] Failed to parse JSON response:", parseError);
