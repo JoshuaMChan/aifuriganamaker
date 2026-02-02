@@ -34,7 +34,7 @@ export async function gemini(
   const ai = new GoogleGenAI({ apiKey });
 
   const startTime = performance.now();
-  console.log(`input: ${prompt.substring(0, 2000)}`);
+  console.log(`input: ${prompt}`);
 
   const response = await ai.models.generateContent({
     model,
@@ -47,7 +47,7 @@ export async function gemini(
       ? anyResponse.response.text()
       : anyResponse.text) ?? "";
 
-  console.log(`output: ${text.substring(0, 2000)}`);
+  console.log(`output: ${text}`);
   const endTime = performance.now();
   const duration = endTime - startTime;
   console.log("duration: ", duration.toFixed(2), "ms");
