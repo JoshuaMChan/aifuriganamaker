@@ -272,29 +272,45 @@ async function callGemini(results: FuriganaResult[]): Promise<void> {
     console.log("[callGemini] Gemini API call completed in", duration.toFixed(2), "ms");
     console.log("[callGemini] Gemini response:", result.response);
 
-    // Parse the JSON response (should be an array of integers)
+    // Parse dictionary response (format: {index: corrected_reading, ...})
     try {
-      const indices: number[] = JSON.parse(result.response);
-      console.log("[callGemini] Parsed indices array:", indices);
+      const corrections: Record<number, string> = JSON.parse(result.response);
+      console.log("[callGemini] Parsed corrections dictionary:", corrections);
 
-      // Backtrack wrong kanji by indices and print them
-      if (indices.length > 0) {
-        const wrongKanji = backtrackWrongKanji(results, indices);
-        console.log("[callGemini] Wrong kanji found:", wrongKanji);
-        wrongKanji.forEach((item, idx) => {
-          console.log(`[callGemini] Wrong kanji ${idx + 1}:`, {
-            index: item.index,
-            original: item.original,
-            reading: item.reading,
-            originalText: item.originalText,
-            position: `line ${item.lineNumber}, position ${item.positionInLine}`,
-          });
-        });
-      } else {
-        console.log("[callGemini] No wrong kanji found - all readings are correct!");
+      const correctionEntries = Object.entries(corrections);
+      if (correctionEntries.length === 0) {
+        console.log("[callGemini] ✓ All readings are correct!");
+        return;
       }
+
+      // Match corrections with tokens by index
+      const filteredResults = results.filter((result) => result.tokens.length > 0);
+      let offset = 0;
+
+      for (let i = 0; i < filteredResults.length; i++) {
+        const result = filteredResults[i]!;
+
+        for (const token of result.tokens) {
+          const adjustedIndex = offset + token.start;
+
+          // Check if this token has a correction in the dictionary
+          if (corrections[adjustedIndex] !== undefined) {
+            const correctedReading = corrections[adjustedIndex]!;
+            // Print: kanji, wrong kana, correct kana
+            console.log(`[callGemini] ${token.original} | Wrong: ${token.reading} | Correct: ${correctedReading}`);
+          }
+        }
+
+        // Update offset for next result (same as promptCompress)
+        offset += result.originalText.length;
+        if (i < filteredResults.length - 1) {
+          offset += 1; // Add 1 for the newline character
+        }
+      }
+
+      console.log(`[callGemini] Found ${correctionEntries.length} correction(s)`);
     } catch (parseError) {
-      console.error("[callGemini] Failed to parse JSON response:", parseError);
+      console.error("[callGemini] Failed to parse dictionary response:", parseError);
     }
   } catch (error) {
     console.error(error instanceof Error ? error.message : String(error));
