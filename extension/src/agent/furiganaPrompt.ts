@@ -29,12 +29,12 @@ export function promptCompress(results: FuriganaResult[]): string {
   // 4,漢字,かんじ
 
   // Combine all originalText into one continuous string
-  const combinedText = filteredResults.map((result) => result.originalText).join("");
+  const combinedText = filteredResults.map((result) => result.originalText).join("\n");
 
   // Collect all tokens with adjusted indices
   const allTokens: Array<{ index: number; original: string; reading: string }> = [];
   let offset = 0;
-  
+
   for (let i = 0; i < filteredResults.length; i++) {
     const result = filteredResults[i]!;
     for (const token of result.tokens) {
