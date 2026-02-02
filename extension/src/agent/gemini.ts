@@ -26,6 +26,12 @@ export type GeminiModelType = (typeof GeminiModel)[keyof typeof GeminiModel];
  */
 const DEFAULT_MODEL: GeminiModelType = GeminiModel.FLASH_LITE_2_5;
 
+/**
+ * Calls Gemini API with JSON schema to return an integer array.
+ * @param prompt - The prompt to send to Gemini
+ * @param model - The Gemini model to use
+ * @returns JSON string representing an array of integers (e.g., "[1, 2, 3]")
+ */
 export async function gemini(
   prompt: string,
   model: GeminiModelType = DEFAULT_MODEL,
@@ -39,19 +45,34 @@ export async function gemini(
   const response = await ai.models.generateContent({
     model,
     contents: prompt,
+    config: {
+      responseMimeType: "application/json",
+      responseSchema: {
+        type: "array",
+        items: {
+          type: "integer",
+        },
+      },
+    },
   });
 
   const anyResponse: any = response;
+
+  // Handle nested response structure: response.response.text() or response.text
+  const innerResponse = anyResponse.response || anyResponse;
   const text: string =
-    (anyResponse.response && typeof anyResponse.response.text === "function"
-      ? anyResponse.response.text()
-      : anyResponse.text) ?? "";
+    (innerResponse && typeof innerResponse.text === "function"
+      ? innerResponse.text()
+      : innerResponse?.text) ?? "";
+
+  // Access usageMetadata from the correct level
+  const usageMetadata = innerResponse?.usageMetadata || anyResponse.usageMetadata || response.usageMetadata;
 
   console.log(`output: ${text}`);
   const endTime = performance.now();
   const duration = endTime - startTime;
   console.log("duration: ", duration.toFixed(2), "ms");
-  console.log("# of tokens: ", response.usageMetadata);
+  console.log("# of tokens: ", usageMetadata);
 
   return text;
 }
