@@ -218,6 +218,9 @@ async function callGemini(results: FuriganaResult[]): Promise<void> {
   }
 }
 
+// Store the latest FuriganaResult for manual Gemini calls
+let latestFuriganaResults: FuriganaResult[] = [];
+
 const isElement = (node: Node): node is Element => node.nodeType === Node.ELEMENT_NODE;
 
 function handleAndObserveJapaneseElements(initialElements: Element[], selector: string) {
@@ -225,10 +228,8 @@ function handleAndObserveJapaneseElements(initialElements: Element[], selector: 
   if (initialElements.length > 0) {
     browser.runtime.sendMessage(ExtEvent.MarkActiveTab);
     addFurigana(...initialElements).then(async (results) => {
-      try {
-        await callGemini(results);
-      } catch (error) {
-      }
+      // Store results for manual Gemini calls
+      latestFuriganaResults = results;
     });
   }
   const observer = new MutationObserver((records) => {
@@ -239,9 +240,25 @@ function handleAndObserveJapaneseElements(initialElements: Element[], selector: 
 
     if (japaneseElements.length) {
       browser.runtime.sendMessage(ExtEvent.MarkActiveTab);
-      addFurigana(...japaneseElements);
+      addFurigana(...japaneseElements).then((results) => {
+        // Update stored results with new ones
+        latestFuriganaResults = [...latestFuriganaResults, ...results];
+      });
     }
   });
 
   observer.observe(document.body, {childList: true, subtree: true});
 }
+
+// Listen for manual Gemini trigger from popup
+browser.runtime.onMessage.addListener((message) => {
+  if (message === ExtEvent.CallGemini) {
+    if (latestFuriganaResults.length > 0) {
+      callGemini(latestFuriganaResults).catch((error) => {
+        console.error("[autoMark] Error calling Gemini manually:", error);
+      });
+    } else {
+      console.log("[autoMark] No furigana results available to call Gemini");
+    }
+  }
+});

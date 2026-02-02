@@ -13,6 +13,7 @@ export const ExtEvent = {
   MarkDisabledTab: "markDisabledTab",
   ModifyKanjiFilter: "modifyKanjiFilter",
   OpenOptionsPage: "openOptionsPage",
+  CallGemini: "callGemini",
 } as const;
 export type ExtEvent = (typeof ExtEvent)[keyof typeof ExtEvent];
 
