@@ -1,6 +1,29 @@
 import type { FuriganaResult } from "@/commons/addFurigana";
 
 /**
+ * Compresses a single FuriganaResult for prompt usage.
+ * Format: originalText on first line, then CSV lines for tokens.
+ *
+ * @param result - Single FuriganaResult to compress
+ * @returns Compact string format for one line
+ */
+export function promptCompressSingle(result: FuriganaResult): string {
+  if (result.tokens.length === 0) {
+    return "";
+  }
+
+  // First line: the original text
+  const lines = [result.originalText];
+
+  // Following lines: CSV format for each token (index,original,reading)
+  for (const token of result.tokens) {
+    lines.push(`${token.start},${token.original},${token.reading}`);
+  }
+
+  return lines.join("\n");
+}
+
+/**
  * Optimizes FuriganaResult array for token-efficient prompt usage.
  *
  * Format: Reconstructs the original text with furigana in parentheses.
