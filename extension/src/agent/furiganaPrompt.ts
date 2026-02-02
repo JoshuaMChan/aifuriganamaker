@@ -22,7 +22,8 @@ export function promptCompress(results: FuriganaResult[]): string {
   }
 
   // Format: Reconstruct text with furigana in parentheses like "振(ふ)り仮名(かな)"
-  const formattedResults = filteredResults.map((result) => {
+  // Each line starts with a line number
+  const formattedResults = filteredResults.map((result, index) => {
     const { originalText, tokens } = result;
     
     // Sort tokens by start position (descending) to insert from end to start
@@ -39,7 +40,8 @@ export function promptCompress(results: FuriganaResult[]): string {
       resultText = before + `${tokenText}(${token.reading})` + after;
     }
     
-    return resultText;
+    // Add line number prefix (1-indexed)
+    return `${index + 1}. ${resultText}`;
   });
 
   // Join multiple results with newlines
