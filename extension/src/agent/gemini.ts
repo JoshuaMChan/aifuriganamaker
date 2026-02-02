@@ -26,16 +26,25 @@ export type GeminiModelType = (typeof GeminiModel)[keyof typeof GeminiModel];
  */
 const DEFAULT_MODEL: GeminiModelType = GeminiModel.FLASH_3_PREVIEW;
 
+export interface GeminiResponse {
+  text: string;
+  usageMetadata?: {
+    promptTokenCount?: number;
+    candidatesTokenCount?: number;
+    totalTokenCount?: number;
+  };
+}
+
 /**
- * Calls Gemini API with JSON schema to return an integer array.
+ * Calls Gemini API and returns the response text and usage metadata.
  * @param prompt - The prompt to send to Gemini
  * @param model - The Gemini model to use
- * @returns JSON string representing an array of integers (e.g., "[1, 2, 3]")
+ * @returns Response text and usage metadata from Gemini
  */
 export async function gemini(
   prompt: string,
   model: GeminiModelType = DEFAULT_MODEL,
-): Promise<string> {
+): Promise<GeminiResponse> {
   const apiKey = import.meta.env.VITE_GEMINI_API_KEY as string;
   const ai = new GoogleGenAI({ apiKey });
 
@@ -45,15 +54,6 @@ export async function gemini(
   const response = await ai.models.generateContent({
     model,
     contents: prompt,
-    config: {
-      responseMimeType: "application/json",
-      responseSchema: {
-        type: "array",
-        items: {
-          type: "integer",
-        },
-      },
-    },
   });
 
   const anyResponse: any = response;
@@ -74,5 +74,12 @@ export async function gemini(
   console.log("duration: ", duration.toFixed(2), "ms");
   console.log("# of tokens: ", usageMetadata);
 
-  return text;
+  return {
+    text,
+    usageMetadata: usageMetadata ? {
+      promptTokenCount: usageMetadata.promptTokenCount,
+      candidatesTokenCount: usageMetadata.candidatesTokenCount,
+      totalTokenCount: usageMetadata.totalTokenCount,
+    } : undefined,
+  };
 }
