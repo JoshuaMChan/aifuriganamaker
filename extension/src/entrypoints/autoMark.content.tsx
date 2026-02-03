@@ -340,7 +340,7 @@ function handleAndObserveJapaneseElements(initialElements: Element[], selector: 
       .flatMap((element) => Array.from(element.querySelectorAll(selector)));
 
     if (japaneseElements.length) {
-      browser.runtime.sendMessage(ExtEvent.MarkActiveTab);
+      browser.runtime.sendMessage(ExtEven`t.MarkActiveTab);
       addFurigana(...japaneseElements).then((results) => {
         // Update stored results with new ones
         latestFuriganaResults = [...latestFuriganaResults, ...results];

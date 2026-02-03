@@ -10,4 +10,4 @@ Thank you for creating this wonderful tool and making it open source! 🙏
 
 I am working on transforming this into an AI agent version. **Work in progress.** My first AI agent try. If it works, I will make it open source too.
 
-**Note:** Un-fine-tuned LLMs are not good enough for this Japanese test yet in terms of efficiency and accuracy. To be continued when next-generation AI arrives.
+**Note:** Un-fine-tuned LLMs are not good enough for this Japanese pronunciation task yet in terms of expenses, efficiency and accuracy. To be continued when next-generation AI arrives.

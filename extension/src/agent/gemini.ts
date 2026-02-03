@@ -24,7 +24,7 @@ export type GeminiModelType = (typeof GeminiModel)[keyof typeof GeminiModel];
  * Default model to use
  * Change this to switch models easily
  */
-const DEFAULT_MODEL: GeminiModelType = GeminiModel.FLASH_3_PREVIEW;
+const DEFAULT_MODEL: GeminiModelType = GeminiModel.PRO_3_PREVIEW;
 
 /**
  * Calls Gemini API with JSON schema to return a dictionary of corrections.
