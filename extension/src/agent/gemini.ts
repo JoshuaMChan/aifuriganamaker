@@ -27,10 +27,10 @@ export type GeminiModelType = (typeof GeminiModel)[keyof typeof GeminiModel];
 const DEFAULT_MODEL: GeminiModelType = GeminiModel.FLASH_3_PREVIEW;
 
 /**
- * Calls Gemini API with JSON schema to return an integer array.
+ * Calls Gemini API with JSON schema to return a dictionary of corrections.
  * @param prompt - The prompt to send to Gemini
  * @param model - The Gemini model to use
- * @returns JSON string representing an array of integers (e.g., "[1, 2, 3]")
+ * @returns JSON string representing a dictionary (e.g., '{"1": "かな", "5": "がつ"}')
  */
 export async function gemini(
   prompt: string,
@@ -47,12 +47,6 @@ export async function gemini(
     contents: prompt,
     config: {
       responseMimeType: "application/json",
-      responseSchema: {
-        type: "array",
-        items: {
-          type: "integer",
-        },
-      },
     },
   });
 

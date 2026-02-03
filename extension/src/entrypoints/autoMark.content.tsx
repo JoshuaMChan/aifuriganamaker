@@ -272,9 +272,9 @@ async function callGemini(results: FuriganaResult[]): Promise<void> {
     console.log("[callGemini] Gemini API call completed in", duration.toFixed(2), "ms");
     console.log("[callGemini] Gemini response:", result.response);
 
-    // Parse dictionary response (format: {index: corrected_reading, ...})
+    // Parse dictionary response (format: {'1':'かな', '5':'がつ', ...})
     try {
-      const corrections: Record<number, string> = JSON.parse(result.response);
+      const corrections: Record<string, string> = JSON.parse(result.response);
       console.log("[callGemini] Parsed corrections dictionary:", corrections);
 
       const correctionEntries = Object.entries(corrections);
@@ -283,7 +283,7 @@ async function callGemini(results: FuriganaResult[]): Promise<void> {
         return;
       }
 
-      // Match corrections with tokens by index
+      // Match corrections with tokens by index (keys are strings like '1', '5', etc.)
       const filteredResults = results.filter((result) => result.tokens.length > 0);
       let offset = 0;
 
@@ -292,10 +292,11 @@ async function callGemini(results: FuriganaResult[]): Promise<void> {
 
         for (const token of result.tokens) {
           const adjustedIndex = offset + token.start;
+          const indexKey = String(adjustedIndex); // Convert to string to match JSON keys
 
           // Check if this token has a correction in the dictionary
-          if (corrections[adjustedIndex] !== undefined) {
-            const correctedReading = corrections[adjustedIndex]!;
+          if (corrections[indexKey] !== undefined) {
+            const correctedReading = corrections[indexKey]!;
             // Print: kanji, wrong kana, correct kana
             console.log(`[callGemini] ${token.original} | Wrong: ${token.reading} | Correct: ${correctedReading}`);
           }
